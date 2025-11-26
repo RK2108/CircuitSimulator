@@ -26,7 +26,6 @@
     import { circuit } from '@/circuit';
 
     const selectedTool = ref(null);
-    const selectedComp = ref(null);
     const count = ref(0);
 
     function displayComponent(event){
@@ -64,6 +63,8 @@
                     y: event.offsetY - 20,
                 });
             }
+
+            count.value++;
         }
     }
 
@@ -85,4 +86,51 @@
 </script>
 
 <style scoped>
+    .container {
+		flex: 1;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background: #ffffff;
+		position: relative;
+	}
+
+	.canvas {
+		width: 900px;
+		height: 550px;
+		border: 2px solid #d1d5db;
+		border-radius: 10px;
+		background:
+			linear-gradient(#f9fafb 1px, transparent 1px),
+			linear-gradient(90deg, #f9fafb 1px, transparent 1px);
+		background-size: 25px 25px;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+		cursor: crosshair;
+	}
+
+	line {
+		stroke: #1f2937;
+		stroke-width: 3;
+		transition: stroke 0.2s ease;
+	}
+
+	line:hover {
+		stroke: #3b82f6;
+		stroke-width: 3.5;
+	}
+
+	.component {
+		stroke-width: 2;
+		rx: 8;
+		transition: all 0.2s ease;
+	}
+
+	.comp-text {
+		font-size: 12px;
+		font-weight: 600;
+		fill: #1f2937;
+		paint-order: stroke;
+		stroke: white;
+		stroke-width: 0.5px;
+	}
 </style>
