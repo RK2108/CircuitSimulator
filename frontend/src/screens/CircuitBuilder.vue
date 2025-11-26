@@ -11,8 +11,6 @@
     import Canvas from '@/components/Canvas.vue';
     import DataPanel from '@/components/DataPanel.vue';
     import { ref, watch } from 'vue';
-import Pallete from '@/components/Pallete.vue';
-import DataPanel from '@/components/DataPanel.vue';
 
     const tool = ref(null);
     const canvas = ref(null);
@@ -26,4 +24,5 @@ import DataPanel from '@/components/DataPanel.vue';
 </script>
 
 <style scoped>
+    
 </style>
