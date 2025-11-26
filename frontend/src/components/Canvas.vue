@@ -1,10 +1,20 @@
 <template>
     <div class="container">
         <svg class="canvas" @click="displayComponent">
+            <line
+				v-for="wire in circuit.wires"
+				:key="wire.id"
+				:x1="getComponent(wire.startId)?.x + 30"
+				:y1="getComponent(wire.startId)?.y + 15"
+				:x2="getComponent(wire.endId)?.x + 30"
+				:y2="getComponent(wire.endId)?.y + 15"
+				stroke="black"
+				stroke-width="2"
+				@click="deleteWire(wire.id)" />
             <g 
-            v-for="comp in circuit.components"
-            :key="comp.id"
-            @click="handleClicks(comp)">
+                v-for="comp in circuit.components"
+                :key="comp.id"
+                @click="handleClicks(comp)">
                 <rect 
                     class="component"
                     :x="comp.x"
@@ -26,6 +36,8 @@
     import { circuit } from '@/circuit';
 
     const selectedTool = ref(null);
+    const selectedComp = ref(null);
+    const nextWireId = ref(0);
     const count = ref(0);
 
     function displayComponent(event){
@@ -76,11 +88,53 @@
         }
     }
 
+    function deleteWire(id) {
+        if (selectedTool.value == 'Delete') {
+            const index = circuit.wires.findIndex((w) => w.id === id);
+            circuit.wires.splice(index, 1);
+        }
+	}
+
     function handleClicks(comp){
         if (selectedTool.value == 'Delete'){
             deleteComponent(comp.id);
         }
+        else if (selectedTool.value === 'Wire') {
+			connectComponents(comp.id);
+		}
     }
+
+    
+	function connectComponents(id) {
+		const wireid = nextWireId.value++;
+		if (!selectedComp.value) {
+			selectedComp.value = id;
+		} else {
+			const startId = selectedComp.value;
+			const endId = id;
+
+			if (startId === endId) {
+				selectedComp.value = null;
+				return;
+			}
+
+			const duplicate = circuit.wires.some(
+				(w) =>
+					(w.startId === startId && w.endId === endId) ||
+					(w.startId === endId && w.endId === startId),
+			);
+
+			if (!duplicate) {
+				circuit.wires.push({ wireid, startId, endId });
+			}
+
+			selectedComp.value = null;
+		}
+	}
+
+	function getComponent(id) {
+		return circuit.components.find((c) => c.id === id);
+	}
 
     defineExpose({ selectedTool });
 </script>
