@@ -1,5 +1,8 @@
 
 
+using System.Runtime.InteropServices.Marshalling;
+using Microsoft.OpenApi.Services;
+
 public class Circuit
 {
     public string Name
@@ -247,6 +250,13 @@ public class Circuit
                                 Resistor r = (Resistor)comp;
                                 SectionResistance += r.GetResistance();
                             }
+                            else if (comp is Lamp)
+                            {
+                                Lamp l = (Lamp)comp;
+                                double power = l.Power;
+                                double voltage = GetVoltage();
+                                SectionResistance += Math.Pow(voltage, 2) / power;
+                            }
                         }
                     }
                 }
@@ -270,6 +280,13 @@ public class Circuit
                             Resistor r = (Resistor)comp;
                             SectionResistance += r.GetResistance();
                         }
+                        else if (comp is Lamp)
+                        {
+                            Lamp l = (Lamp)comp;
+                            double power = l.Power;
+                            double voltage = GetVoltage();
+                            SectionResistance += Math.Pow(voltage, 2) / power;
+                        }
                     }
                 }
             }
@@ -280,5 +297,31 @@ public class Circuit
         double totalResistance = seriesResistance + (1 / inverseResistance);
 
         return totalResistance;
+    }
+
+    public double GetVoltage()
+    {
+        double voltage = 0;
+
+        foreach (var component in Components)
+        {
+            if (component is Battery)
+            {
+                Battery b = (Battery)component;
+                voltage += b.EMF;
+            }
+        }
+
+        return voltage;
+    }
+
+    public double GetCurrent()
+    {
+        double voltage = GetVoltage();
+        double resistance = CalculateResistance();
+
+        double current = voltage / resistance;
+
+        return current;
     }
 }
