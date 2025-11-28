@@ -24,10 +24,11 @@
 </script>
 
 <style scoped>
-    body {
+    .container {
         margin: 0;
         background: #f8fafc;
         color: #111827;
         font-family: 'Inter', sans-serif;
+        display: flex;
     }
 </style>
