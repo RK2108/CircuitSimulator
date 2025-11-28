@@ -226,11 +226,11 @@ public class Circuit
         var ParallelSections = GetParallelSections(SeriesSections);
         double seriesResistance = 0;
 
-        foreach (var section in SeriesSections)
+        for (int i = 0; i < SeriesSections.Count - 1; i++)
         {
-            if (ParallelSections.Contains(section))
+            if (ParallelSections.Contains(SeriesSections[i]))
             {
-                SeriesSections.Remove(section);
+                SeriesSections.Remove(SeriesSections[i]);
             }
         }
 
