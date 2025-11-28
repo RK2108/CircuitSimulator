@@ -2,16 +2,11 @@
     <div class="pallete">
         <h3>Tools</h3>
         <div class="options">
-            <label>Battery</label>
-            <input type="radio" value="Battery" v-model="selected"></input>
-            <label>Resistor</label>
-            <input type="radio" value="Resistor" v-model="selected"></input>
-            <label>Lamp</label>
-            <input type="radio" value="Lamp" v-model="selected"></input>
-            <label>Wire</label>
-            <input type="radio" value="Wire" v-model="selected"></input>
-            <label>Delete</label>
-            <input type="radio" value="Delete" v-model="selected"></input>
+            <label><input type="radio" value="Battery" v-model="selected"></input> Battery</label>
+            <label><input type="radio" value="Resistor" v-model="selected"></input> Resistor</label>
+            <label><input type="radio" value="Lamp" v-model="selected"></input> Lamp</label>
+            <label><input type="radio" value="Wire" v-model="selected"></input> Wire</label>
+            <label><input type="radio" value="Delete" v-model="selected"></input> Delete</label>
         </div>
     </div>
 </template>
@@ -48,7 +43,7 @@
     font-size: 0.9rem;
     }
 
-    .tool-options label {
+    .options label {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -62,20 +57,12 @@
     font-size: 0.9rem;
     }
 
-    .tool-options input[type='radio'] {
+    .options input[type='radio'] {
     accent-color: #3b82f6;
     }
 
-    .tool-options label:hover {
+    .options label:hover {
     background: #eef2ff;
     border-color: #6366f1;
-    transform: translateX(3px);
-    }
-
-    .tool-options input:checked + span,
-    .tool-options input:checked {
-    background-color: #3b82f6;
-    color: white;
-    border-color: #3b82f6;
     }
 </style>
