@@ -9,7 +9,35 @@ public class CircuitController : ControllerBase
     {
         Circuit circuit = ConvertFromDTO(circuitDto);
 
-        return Ok(circuit.Name);
+        if (circuit.Components.Count < 2)
+        {
+            return BadRequest("Invalid Circuit: Add more components");
+        }
+        
+        int batteryCount = 0;
+        foreach (var component in circuit.Components)
+        {
+            if (component.ComponentType == "Battery")
+            {
+                batteryCount++;
+            }
+        }
+
+        if (batteryCount == 0)
+        {
+            return BadRequest("Invalid Circuit: Add a battery");
+        }
+
+        var simulation = new
+        {
+            name = circuit.Name,
+            resistance = circuit.CalculateResistance(),
+            voltage = circuit.GetVoltage(),
+            current = circuit.GetCurrent()
+        };
+
+
+        return Ok(simulation);
     }
 
     public Circuit ConvertFromDTO(CircuitDTO circuitDTO)
