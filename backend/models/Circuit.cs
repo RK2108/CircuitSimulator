@@ -2,6 +2,7 @@
 
 using System.Runtime.InteropServices.Marshalling;
 using Microsoft.OpenApi.Services;
+using Microsoft.VisualBasic;
 
 public class Circuit
 {
@@ -50,53 +51,6 @@ public class Circuit
         Components.Remove(comp);
     }
 
-    public List<List<int>> GetCircuitStructure() // returns the overall structure of the circuit, modelled as a graph
-    {
-        var FullStructure = new List<List<int>>();
-        var visited = new List<int>();
-        var queue = new Queue<int>();
-
-        foreach (var comp in Components)
-        {
-            if (GetConnectionCount(comp.Id) != 2)
-            {
-                queue.Enqueue(comp.Id);
-            }
-        }
-
-        while (queue.Count > 0)
-        {
-            var section = new List<int>();
-
-            int currentNode = queue.Dequeue();
-            section.Add(currentNode);
-        
-
-
-        }
-
-        return FullStructure;
-    }
-
-    public List<int> GetNeighbours(int currentNode)
-    {
-        var neighbours = new List<int>();
-
-        foreach (var wire in Wires)
-        {
-            if (wire.StartId == currentNode)
-            {
-                neighbours.Add(wire.EndId);
-            }
-            else if (wire.EndId == currentNode)
-            {
-                neighbours.Add(wire.StartId);
-            }
-        }
-
-        return neighbours;
-    }
-
     public int GetConnectionCount(int id) // finds the number of components the component is connected to
     {
         int count = 0;
@@ -112,191 +66,103 @@ public class Circuit
         return count;
     }
 
-    public List<int> GetSeriesSection(int startId, int currentNode, List<int> visitedNodes)
+    public List<int> GetNeighbours(int currentNode)
     {
-        var section = new List<int>();
-        section.Add(startId);
+        var neighbours = new List<int>();
 
-        int previous = startId;
-        int current = currentNode;
-
-        while (GetConnectionCount(current) == 2)
+        foreach (var wire in Wires)
         {
-            section.Add(current);
-            visitedNodes.Add(current);
-
-            var neighbours = GetNeighbours(current);
-
-            int next = neighbours.First(n => n != previous);
-
-            previous = current;
-            current = next;
-        }
-
-        section.Add(current);
-
-        return section;
-    }
-
-    public List<List<int>> GetAllSections()
-    {
-        var queue = new Queue<int>();
-        var visitedNodes = new List<int>();
-        var visitedBoundaries = new List<int>();
-        var AllSections = new List<List<int>>();
-
-        foreach (var comp in Components)
-        {
-            if (GetConnectionCount(comp.Id) != 2)
+            if (wire.StartId == currentNode)
             {
-                queue.Enqueue(comp.Id);
-                visitedBoundaries.Add(comp.Id);
-            }
-        }
-
-        while (queue.Count > 0)
-        {
-            int start = queue.Dequeue();
-            
-            var neighbours = GetNeighbours(start);
-
-            foreach (var neighbour in neighbours)
-            {
-                if (visitedNodes.Contains(neighbour) == true){
-                    continue;
-                }
-
-                var section = GetSeriesSection(start, neighbour, visitedNodes);
-
-                AllSections.Add(section);
-
-                int end = section.Last();
-
-                if (visitedBoundaries.Contains(end) == false)
+                if (neighbours.Contains(wire.EndId) == false)
                 {
-                    queue.Enqueue(end);
-                    visitedBoundaries.Add(end);
+                    neighbours.Add(wire.EndId);
+                }
+            }
+            else if (wire.EndId == currentNode)
+            {
+                if (neighbours.Contains(wire.StartId) == false)
+                {
+                    neighbours.Add(wire.StartId);
                 }
             }
         }
 
-        return AllSections;
+        return neighbours;
     }
 
-    public List<List<int>> GetParallelSections(List<List<int>> AllSections)
+    public List<int> GetConnectedComponents(List<int> TerminalNodes)
     {
-        var parallelgroups = new List<List<int>>();
-        var checkedgroups = new List<int>();
+        var visited = new List<int>();
+        var queue = new Queue<int>();
 
-        for(int i = 0; i < AllSections.Count - 1; i++)
+        foreach (var id in TerminalNodes)
         {
-            if (checkedgroups.Contains(i) == true)
+            if (visited.Contains(id))
             {
                 continue;
             }
 
-            var section1 = AllSections[i];
+            int startNode = Components.FindIndex(c => c.Id == id);
 
-            var currentgroup = new List<int>();
+            queue.Enqueue(startNode);
+            visited.Add(startNode);
 
-            for(int j = 0; j < AllSections.Count - 1; j++)
+            while (queue.Count > 0)
             {
-                var section2 = AllSections[j];
+                int currentNode = queue.Dequeue();
+                var neighbours = GetNeighbours(currentNode);
 
-                if (section1[0] == section2[0] && section1.Last() == section2.Last())
+                foreach (var neighbour in neighbours)
                 {
-                    currentgroup = section1;
-                    checkedgroups.Add(j);
+                    if (visited.Contains(neighbour) == false)
+                    {
+                        visited.Add(neighbour);
+                        queue.Enqueue(neighbour);
+                    }
                 }
-            }
-
-            if (currentgroup.Count > 1)
-            {
-                parallelgroups.Add(currentgroup);
             }
         }
 
-        return parallelgroups;
-    }
 
+
+        return visited;
+    }
 
     public double CalculateResistance()
     {
-        var SeriesSections = GetAllSections();
-        var ParallelSections = GetParallelSections(SeriesSections);
-        double seriesResistance = 0;
-
-        for (int i = 0; i < SeriesSections.Count - 1; i++)
+        var TerminalNodes = new List<int>();
+        foreach (var comp in Components)
         {
-            if (ParallelSections.Contains(SeriesSections[i]))
+            if (GetConnectionCount(comp.Id) < 3)
             {
-                SeriesSections.Remove(SeriesSections[i]);
+                if (TerminalNodes.Contains(comp.Id) == false)
+                {
+                    TerminalNodes.Add(comp.Id);
+                }
             }
         }
 
-        if (SeriesSections != null)
-        {
-            foreach (var section in SeriesSections)
-            {
-                double SectionResistance = 0;
-                foreach (var component in section)
-                {
-                    foreach (var comp in Components)
-                    {
-                        if (comp.Id == component)
-                        {
-                            if (comp is Resistor)
-                            {
-                                Resistor r = (Resistor)comp;
-                                SectionResistance += r.GetResistance();
-                            }
-                            else if (comp is Lamp)
-                            {
-                                Lamp l = (Lamp)comp;
-                                double power = l.Power;
-                                double voltage = GetVoltage();
-                                SectionResistance += Math.Pow(voltage, 2) / power;
-                            }
-                        }
-                    }
-                }
+        var ConnectedComponents = GetConnectedComponents(TerminalNodes);
 
-                seriesResistance += SectionResistance;
-            }    
-        }
+        double resistance = 0;
 
-        double inverseResistance = 0;
-        foreach (var section in ParallelSections)
+        foreach (var id in ConnectedComponents)
         {
-            double SectionResistance = 0;
-            foreach (var component in section)
+            foreach(var comp in Components)
             {
-                foreach (var comp in Components)
+                if (comp.Id == id)
                 {
-                    if (comp.Id == component)
+                    if (comp is Resistor)
                     {
-                        if (comp is Resistor)
-                        {
-                            Resistor r = (Resistor)comp;
-                            SectionResistance += r.GetResistance();
-                        }
-                        else if (comp is Lamp)
-                        {
-                            Lamp l = (Lamp)comp;
-                            double power = l.Power;
-                            double voltage = GetVoltage();
-                            SectionResistance += Math.Pow(voltage, 2) / power;
-                        }
+                        Resistor r = (Resistor)comp;
+                        resistance += r.Resistance;
                     }
                 }
             }
-
-            inverseResistance += 1 / SectionResistance;
         }
 
-        double totalResistance = seriesResistance + (1 / inverseResistance);
-
-        return totalResistance;
+        return resistance;
     }
 
     public double GetVoltage()
