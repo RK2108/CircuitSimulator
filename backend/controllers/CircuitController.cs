@@ -28,12 +28,16 @@ public class CircuitController : ControllerBase
             return BadRequest("Invalid Circuit: Add a battery");
         }
 
+        double resistance = circuit.CalculateResistance();
+        double voltage = circuit.GetVoltage();
+        double current = circuit.GetCurrent(voltage, resistance);
+
         var simulation = new
         {
             name = circuit.Name,
-            resistance = circuit.CalculateResistance(),
-            voltage = circuit.GetVoltage(),
-            current = circuit.GetCurrent()
+            resistance,
+            voltage,
+            current
         };
 
 
