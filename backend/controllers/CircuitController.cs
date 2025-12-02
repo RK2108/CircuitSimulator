@@ -4,6 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api/[controller]")]
 public class CircuitController : ControllerBase
 {
+    private readonly CircuitDbContext database;
+
+    public CircuitController(CircuitDbContext db)
+    {
+        database = db;
+    }
+
     [HttpPost("simulate")]
     public IActionResult Simulate([FromBody] CircuitDTO circuitDto)
     {
@@ -110,5 +117,25 @@ public class CircuitController : ControllerBase
         }
 
         return circuit;
+    }
+
+
+    [HttpPost("save")]
+    public async Task<IActionResult> SaveCircuit([FromBody] CircuitDTO circuitDto)
+    {
+        Circuit circuit = ConvertFromDTO(circuitDto);
+
+        if (database.Circuits.Contains(circuit))
+        {
+            database.Circuits.Update(circuit);
+            await database.SaveChangesAsync();
+        }
+        else
+        {
+            await database.Circuits.AddAsync(circuit);
+            await database.SaveChangesAsync();
+        }
+ 
+        return Ok("Circuit has been saved");
     }
 }

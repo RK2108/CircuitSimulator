@@ -1,13 +1,13 @@
 public class Battery : Component
 {
-    public double EMF
+    public double Emf
     {
         get;
         set;
     }
 
-    public Battery(int id, double emf, int x, int y) : base(id, "Battery", x, y)
+    public Battery(int componentId, double emf, int x, int y) : base(componentId, "Battery", x, y)
     {
-        EMF = emf;
+        Emf = emf;
     }
 }

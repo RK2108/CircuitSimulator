@@ -6,7 +6,7 @@ public class Resistor : Component
         set;
     }
 
-    public Resistor(int id, double resistance, int x, int y) : base(id, "Resistor", x, y)
+    public Resistor(int componentId, double resistance, int x, int y) : base(componentId, "Resistor", x, y)
     {
         Resistance = resistance;
     }

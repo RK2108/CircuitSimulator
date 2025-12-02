@@ -6,7 +6,7 @@ public class Lamp : Component
         set;
     }
 
-    public Lamp(int id, double power, int x, int y) : base(id, "Lamp", x, y)
+    public Lamp(int componentId, double power, int x, int y) : base(componentId, "Lamp", x, y)
     {
         Power = power;
     }

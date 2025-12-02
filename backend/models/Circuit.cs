@@ -276,7 +276,7 @@ public class Circuit
             if (component is Battery)
             {
                 Battery b = (Battery)component;
-                voltage += b.EMF;
+                voltage += b.Emf;
             }
         }
 

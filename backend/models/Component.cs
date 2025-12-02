@@ -12,13 +12,13 @@ public abstract class Component
         set;
     }
 
-    public int x
+    public int X
     {
         get;
         set;
     }
 
-    public int y
+    public int Y
     {
         get;
         set;
@@ -28,7 +28,7 @@ public abstract class Component
     {
         ComponentType = type;
         ComponentId = id;
-        this.x = x;
-        this.y = y;
+        X = x;
+        Y = y;
     }
 }
