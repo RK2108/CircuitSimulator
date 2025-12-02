@@ -29,8 +29,25 @@ public class CircuitController : ControllerBase
         }
 
         double resistance = circuit.CalculateResistance();
+
+        if (resistance is double.PositiveInfinity || resistance is double.NegativeInfinity || resistance is double.NaN)
+        {
+            resistance = 0;
+        }
+
         double voltage = circuit.GetVoltage();
+
+        if (voltage is double.PositiveInfinity || voltage is double.NegativeInfinity || voltage is double.NaN)
+        {
+            voltage = 0;
+        }
+
         double current = circuit.GetCurrent(voltage, resistance);
+
+        if (current is double.PositiveInfinity || current is double.NegativeInfinity || current is double.NaN)
+        {
+            current = 0;
+        }
 
         var simulation = new
         {

@@ -1,10 +1,3 @@
-
-
-using System.Runtime.InteropServices.Marshalling;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.OpenApi.Services;
-using Microsoft.VisualBasic;
-
 public class Circuit
 {
     public string Name
@@ -269,10 +262,6 @@ public class Circuit
         else if (type == "Parallel Loops" || type == "Spider")
         {
             totalResistance = ParallelResistance(BranchResistances);
-        }
-        else
-        {
-            totalResistance = 0;
         }
 
         return totalResistance;
