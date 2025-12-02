@@ -1,8 +1,8 @@
 <template>
     <div class="data">
         <h3>Circuit Data</h3>
-        <button class="solve-btn" @click="simulateCircuit">Simulate</button>
-        <button class="solve-btn">Save</button>
+        <button class="solve-btn" @click="SimulateCircuit">Simulate</button>
+        <button class="solve-btn" @click="SaveCircuit">Save</button>
         <p>Circuit Id: {{ circuit.circuitId }}</p>
         <div v-if="result" class="result-box">
             <p>Resistance: {{ result.resistance }}</p>
@@ -18,62 +18,120 @@
 
     const result = ref(null);
 
-    async function simulateCircuit(){
-        try {
-            const RawCircuit = toRaw(circuit);
-            
-            const FormattedComponents = RawCircuit.components?.map((c) => {
+    async function SimulateCircuit(){
+      try {
+          const RawCircuit = toRaw(circuit);
+          
+          const FormattedComponents = RawCircuit.components?.map((c) => {
 
-                const component = {
-                    id: c.id, 
-                    type: c.componentType,
-                    resistance: c.resistance,
-                    voltage: c.voltage,
-                    power: c.power, 
-                    x: c.x, 
-                    y: c.y 
-                };
-                
-                return component;
+              const component = {
+                  id: c.id, 
+                  type: c.componentType,
+                  resistance: c.resistance,
+                  voltage: c.voltage,
+                  power: c.power, 
+                  x: c.x, 
+                  y: c.y 
+              };
+              
+              return component;
 
-            }) ?? [];
+          }) ?? [];
 
-            const FormattedWires = RawCircuit.wires?.map((w) => ({
+          const FormattedWires = RawCircuit.wires?.map((w) => ({
 
-                StartId: w.startId,
-                EndId: w.endId,
+              StartId: w.startId,
+              EndId: w.endId,
 
-            })) ?? [];
+          })) ?? [];
 
-            const name = window.prompt("Enter name");
+          const name = window.prompt("Enter name");
 
-            const FormattedCircuit = {
-                CircuitId: circuit.circuitId,
-                name: name ?? 'Untitled Circuit',
-                components: FormattedComponents,
-                wires: FormattedWires,
-            };
+          const FormattedCircuit = {
+              CircuitId: circuit.circuitId,
+              name: name ?? 'Untitled Circuit',
+              components: FormattedComponents,
+              wires: FormattedWires,
+          };
 
-            const response = await fetch(
-                'http://localhost:5107/api/circuit/simulate', 
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(FormattedCircuit),
-                },
-            );
+          const response = await fetch(
+              'http://localhost:5107/api/circuit/simulate', 
+              {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(FormattedCircuit),
+              },
+          );
 
-            result.value = await response.json();
+          result.value = await response.json();
 
-            if (!response.ok){
-                const errorMessage = await response.text();
-                alert(errorMessage);
-                return;
-            }
-        }
-        catch (err){
-            alert(err);
-        }
+          if (!response.ok){
+              const errorMessage = await response.text();
+              alert(errorMessage);
+              return;
+          }
+      }
+      catch (err){
+          alert(err);
+      }
+    }
+
+    async function SaveCircuit(){
+      try {
+          const RawCircuit = toRaw(circuit);
+          
+          const FormattedComponents = RawCircuit.components?.map((c) => {
+
+              const component = {
+                  id: c.id, 
+                  type: c.componentType,
+                  resistance: c.resistance,
+                  voltage: c.voltage,
+                  power: c.power, 
+                  x: c.x, 
+                  y: c.y 
+              };
+              
+              return component;
+
+          }) ?? [];
+
+          const FormattedWires = RawCircuit.wires?.map((w) => ({
+
+              StartId: w.startId,
+              EndId: w.endId,
+
+          })) ?? [];
+
+          const name = window.prompt("Enter name");
+
+          const FormattedCircuit = {
+              CircuitId: circuit.circuitId,
+              name: name ?? 'Untitled Circuit',
+              components: FormattedComponents,
+              wires: FormattedWires,
+          };
+
+          const response = await fetch(
+              'http://localhost:5107/api/circuit/save', 
+              {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(FormattedCircuit),
+              },
+          );
+
+          alert(await response.text());
+
+          if (!response.ok){
+              const errorMessage = await response.text();
+              alert(errorMessage);
+              return;
+          }
+      }
+      catch (err){
+          alert(err);
+      }
     }
 </script>
 
