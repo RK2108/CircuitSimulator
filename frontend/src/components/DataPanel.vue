@@ -78,7 +78,7 @@
 </script>
 
 <style scoped>
-.data-panel {
+.data{
   width: 260px;
   background: #f3f4f6;
   border-left: 1px solid #e5e7eb;
@@ -87,7 +87,7 @@
   box-shadow: inset 2px 0 4px rgba(0, 0, 0, 0.03);
 }
 
-.data-panel h3 {
+.data h3 {
   font-weight: 600;
   color: #374151;
   margin-bottom: 1rem;

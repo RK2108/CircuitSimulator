@@ -26,15 +26,15 @@
 </script>
 
 <style scoped>
-    .palette {
+    .pallete {
     width: 180px;
-    background: #f9fafb;
+    background: #e2e8ee;
     border-right: 1px solid #e5e7eb;
     padding: 1rem;
-    box-shadow: inset -2px 0 4px rgba(0, 0, 0, 0.03);
+    box-shadow: -2px 0 4px rgba(0, 0, 0, 0.03);
     }
 
-    .palette h3 {
+    .pallete h3 {
     font-weight: 600;
     color: #374151;
     margin-bottom: 1rem;

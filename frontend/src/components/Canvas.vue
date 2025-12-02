@@ -150,15 +150,15 @@
 	}
 
 	.canvas {
-		width: 900px;
+		width: 1000px;
 		height: 550px;
-		border: 2px solid #d1d5db;
+		border: 2px solid black;
 		border-radius: 10px;
 		background:
-			linear-gradient(#f9fafb 1px, transparent 1px),
-			linear-gradient(90deg, #f9fafb 1px, transparent 1px);
+			linear-gradient(#5097dd 1px, transparent 1px),
+			linear-gradient(90deg, #5097dd 1px, transparent 1px);
 		background-size: 25px 25px;
-		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+		box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.05);
 		cursor: crosshair;
 	}
 
