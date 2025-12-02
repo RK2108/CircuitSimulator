@@ -3,8 +3,11 @@
         <h3>Circuit Data</h3>
         <button class="solve-btn" @click="simulateCircuit">Simulate</button>
         <button class="solve-btn">Save</button>
+        <p>Circuit Id: {{ circuit.circuitId }}</p>
         <div v-if="result" class="result-box">
-            <p>{{ result }}</p>
+            <p>Resistance: {{ result.resistance }}</p>
+            <p>Voltage: {{ result.voltage }}</p>
+            <p>Current: {{ result.current }}</p>
         </div>
     </div>
 </template>
@@ -16,7 +19,6 @@
     const result = ref(null);
 
     async function simulateCircuit(){
-        result.value = null;
         try {
             const RawCircuit = toRaw(circuit);
             
@@ -60,6 +62,8 @@
                     body: JSON.stringify(FormattedCircuit),
                 },
             );
+
+            result.value = await response.json();
 
             if (!response.ok){
                 const errorMessage = await response.text();
