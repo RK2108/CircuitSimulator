@@ -98,8 +98,8 @@ public class CircuitController : ControllerBase
                 continue;
             }
 
-            bool startExists = circuit.Components.Any(c => c.Id == start);
-            bool endExists = circuit.Components.Any(c => c.Id == end);
+            bool startExists = circuit.Components.Any(c => c.ComponentId == start);
+            bool endExists = circuit.Components.Any(c => c.ComponentId == end);
 
             if (startExists && endExists)
             {

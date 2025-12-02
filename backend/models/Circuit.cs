@@ -201,7 +201,7 @@ public class Circuit
         {
             foreach (var comp in Components)
             {
-                if (comp.Id == id)
+                if (comp.ComponentId == id)
                 {
                     if (comp is Resistor)
                     {
@@ -232,11 +232,11 @@ public class Circuit
         var TerminalNodes = new List<int>();
         foreach (var comp in Components)
         {
-            if (GetConnectionCount(comp.Id) >= 2)
+            if (GetConnectionCount(comp.ComponentId) >= 2)
             {
-                if (TerminalNodes.Contains(comp.Id) == false)
+                if (TerminalNodes.Contains(comp.ComponentId) == false)
                 {
-                    TerminalNodes.Add(comp.Id);
+                    TerminalNodes.Add(comp.ComponentId);
                 }
             }
         }

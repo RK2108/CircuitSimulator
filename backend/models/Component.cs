@@ -1,6 +1,6 @@
 public abstract class Component
 {
-    public int Id
+    public int ComponentId
     {
         get;
         set;
@@ -27,7 +27,7 @@ public abstract class Component
     public Component(int id, string type, int x, int y)
     {
         ComponentType = type;
-        Id = id;
+        ComponentId = id;
         this.x = x;
         this.y = y;
     }

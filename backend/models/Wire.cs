@@ -1,6 +1,6 @@
 public class Wire
 {
-    public int Id
+    public int WireId
     {
         get;
         set;
