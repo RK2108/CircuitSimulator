@@ -1,5 +1,5 @@
 <template>
-    <button>New Circuit</button>
+    <button @click="NewCircuit">New Circuit</button>
     <CircuitList/>
 </template>
 
