@@ -3,8 +3,8 @@ import CircuitBuilder from "@/screens/CircuitBuilder.vue";
 import CircuitSelector from "@/screens/CircuitSelector.vue";
 
 const routes = [
-    {path: "/builder", component: CircuitBuilder},
-    {path: "/selector", component: CircuitSelector}
+    {path: "/", component: CircuitSelector},
+    {path: "/builder", component: CircuitBuilder}
 ]
 
 export const router = createRouter({

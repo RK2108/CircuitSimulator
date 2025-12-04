@@ -1,10 +1,9 @@
 <template>
-  <CircuitBuilder/>
+  <RouterView/>
 </template>
 
 <script setup>
-import CircuitBuilder from './screens/CircuitBuilder.vue';
-
+import { RouterView } from 'vue-router';
 </script>
 
 

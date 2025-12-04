@@ -5,6 +5,10 @@
 
 <script setup>
     import CircuitList from '@/components/CircuitList.vue';
+    import { circuit } from '@/circuit';
+    import { useRouter } from 'vue-router';
+
+    const router = useRouter();
 
     async function NewCircuit(){
         const Id = window.prompt("Enter Circuit Id");
@@ -12,11 +16,13 @@
 
         const CircuitInfo = {
             circuitId: Id,
-            name: Name
+            name: Name,
+            components: [],
+            wires: []
         }
         
         try {
-            const response = await fetch(
+            await fetch(
                 'http://localhost:5107/api/circuit/create', 
                 {
                     method: 'POST',
@@ -24,12 +30,14 @@
                     body: JSON.stringify(CircuitInfo),
                 },
             );
-
-            alert(await response.json());
         }
         catch(err){
             alert(err);
         }
+        
+        circuit.circuitId = Id;
+        circuit.name = Name;
+        router.push("/builder");
     }
 </script>
 
