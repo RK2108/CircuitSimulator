@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -155,5 +156,18 @@ public class CircuitController : ControllerBase
 
             return Ok("Circuit Created");
         }
+    }
+
+    [HttpGet("GetAllCircuits")]
+    public async Task<IActionResult> GetAllCircuits()
+    {
+        var AllCircuits = database.Circuits.ToList();
+        return Ok(AllCircuits);
+    }
+
+    [HttpPost("load")]
+    public async Task<IActionResult> LoadCircuit([FromBody] int id)
+    {
+        return Ok(database.Circuits.Where(c => c.CircuitId == id).Include(c => c.Components).Include(c => c.Wires).ToList());
     }
 }
