@@ -138,4 +138,22 @@ public class CircuitController : ControllerBase
  
         return Ok("Circuit has been saved");
     }
+
+    [HttpPost("create")]
+    public async Task<IActionResult> CreateCircuit([FromBody] CircuitDTO circuitDto)
+    {
+        Circuit circuit = ConvertFromDTO(circuitDto);
+
+        if (database.Circuits.Contains(circuit))
+        {
+            return BadRequest("Circuit already exists with this id/name");
+        }
+        else
+        {
+            await database.Circuits.AddAsync(circuit);
+            await database.SaveChangesAsync();
+
+            return Ok("Circuit Created");
+        }
+    }
 }
