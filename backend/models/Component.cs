@@ -24,10 +24,10 @@ public abstract class Component
         set;
     }
 
-    public Component(int id, string type, int x, int y)
+    public Component(int componentId, string componentType, int x, int y)
     {
-        ComponentType = type;
-        ComponentId = id;
+        ComponentType = componentType;
+        ComponentId = componentId;
         X = x;
         Y = y;
     }

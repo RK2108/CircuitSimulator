@@ -18,8 +18,9 @@ public class Wire
         set;
     }
 
-    public Wire(int startId, int endId)
+    public Wire(int wireId, int startId, int endId)
     {
+        WireId = wireId;
         StartId = startId;
         EndId = endId;
     }

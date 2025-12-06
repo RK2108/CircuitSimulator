@@ -1,3 +1,4 @@
+using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -112,7 +113,7 @@ public class CircuitController : ControllerBase
             if (startExists && endExists)
             {
                 
-                Wire w = new Wire(wireDTO.StartId, wireDTO.EndId);
+                Wire w = new Wire(wireDTO.Id, wireDTO.StartId, wireDTO.EndId);
                 circuit.AddWire(w);
             }
         }
@@ -124,19 +125,21 @@ public class CircuitController : ControllerBase
     [HttpPost("save")]
     public async Task<IActionResult> SaveCircuit([FromBody] CircuitDTO circuitDto)
     {
-        Circuit circuit = ConvertFromDTO(circuitDto);
+        Circuit payload = ConvertFromDTO(circuitDto);
 
-        if (database.Circuits.Contains(circuit))
+        var circuit = database.Circuits.Include(c => c.Components).Include(c => c.Wires).FirstOrDefault();
+
+        if (circuit != null)
         {
-            database.Circuits.Update(circuit);
+            database.Wires.RemoveRange(circuit.Wires);
+            database.Components.RemoveRange(circuit.Components);
+            database.Circuits.Remove(circuit);
             await database.SaveChangesAsync();
         }
-        else
-        {
-            await database.Circuits.AddAsync(circuit);
-            await database.SaveChangesAsync();
-        }
- 
+
+        await database.Circuits.AddAsync(payload);
+        await database.SaveChangesAsync();
+
         return Ok("Circuit has been saved");
     }
 
@@ -168,6 +171,6 @@ public class CircuitController : ControllerBase
     [HttpPost("load")]
     public async Task<IActionResult> LoadCircuit([FromBody] int id)
     {
-        return Ok(database.Circuits.Where(c => c.CircuitId == id).Include(c => c.Components).Include(c => c.Wires).ToList());
+        return Ok(database.Circuits.Where(c => c.CircuitId == id).Include(c => c.Wires).ToList());
     }
 }
