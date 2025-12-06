@@ -25,7 +25,7 @@
           const FormattedComponents = RawCircuit.components?.map((c) => {
 
               const component = {
-                  id: c.id, 
+                  id: c.componentId, 
                   type: c.componentType,
                   resistance: c.resistance,
                   voltage: c.voltage,
@@ -39,17 +39,15 @@
           }) ?? [];
 
           const FormattedWires = RawCircuit.wires?.map((w) => ({
-
-              StartId: w.startId,
-              EndId: w.endId,
+            WireId: w.WireId,
+            StartId: w.startId,
+            EndId: w.endId,
 
           })) ?? [];
 
-          const name = window.prompt("Enter name");
-
           const FormattedCircuit = {
               CircuitId: circuit.circuitId,
-              name: name ?? 'Untitled Circuit',
+              name: circuit.name ?? 'Untitled Circuit',
               components: FormattedComponents,
               wires: FormattedWires,
           };
@@ -83,7 +81,7 @@
           const FormattedComponents = RawCircuit.components?.map((c) => {
 
               const component = {
-                  id: c.id, 
+                  id: c.componentId, 
                   type: c.componentType,
                   resistance: c.resistance,
                   voltage: c.voltage,
@@ -97,17 +95,15 @@
           }) ?? [];
 
           const FormattedWires = RawCircuit.wires?.map((w) => ({
-
-              StartId: w.startId,
-              EndId: w.endId,
+            WireId: w.WireId,
+            StartId: w.startId,
+            EndId: w.endId,
 
           })) ?? [];
 
-          const name = window.prompt("Enter name");
-
           const FormattedCircuit = {
               CircuitId: circuit.circuitId,
-              name: name ?? 'Untitled Circuit',
+              name: circuit.name ?? 'Untitled Circuit',
               components: FormattedComponents,
               wires: FormattedWires,
           };
