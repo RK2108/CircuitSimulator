@@ -37,37 +37,9 @@ public class CircuitController : ControllerBase
             return BadRequest("Invalid Circuit: Add a battery");
         }
 
-        double resistance = circuit.CalculateResistance();
+        var SolvedCircuit = circuit.SolveCircuit();
 
-        if (resistance is double.PositiveInfinity || resistance is double.NegativeInfinity || resistance is double.NaN)
-        {
-            resistance = 0;
-        }
-
-        double voltage = circuit.GetVoltage();
-
-        if (voltage is double.PositiveInfinity || voltage is double.NegativeInfinity || voltage is double.NaN)
-        {
-            voltage = 0;
-        }
-
-        double current = circuit.GetCurrent(voltage, resistance);
-
-        if (current is double.PositiveInfinity || current is double.NegativeInfinity || current is double.NaN)
-        {
-            current = 0;
-        }
-
-        var simulation = new
-        {
-            name = circuit.Name,
-            resistance,
-            voltage,
-            current
-        };
-
-
-        return Ok(simulation);
+        return Ok(SolvedCircuit);
     }
 
     public Circuit ConvertFromDTO(CircuitDTO circuitDTO)
@@ -127,7 +99,7 @@ public class CircuitController : ControllerBase
     {
         Circuit payload = ConvertFromDTO(circuitDto);
 
-        var circuit = database.Circuits.Include(c => c.Components).Include(c => c.Wires).FirstOrDefault();
+        var circuit = database.Circuits.Include(c => c.Components).Include(c => c.Wires).FirstOrDefault(c => c.CircuitId == payload.CircuitId);
 
         if (circuit != null)
         {
@@ -137,7 +109,7 @@ public class CircuitController : ControllerBase
             await database.SaveChangesAsync();
         }
 
-        await database.Circuits.AddAsync(payload);
+        await database.Circuits.AddAsync(payload);  
         await database.SaveChangesAsync();
 
         return Ok("Circuit has been saved");
@@ -171,6 +143,6 @@ public class CircuitController : ControllerBase
     [HttpPost("load")]
     public async Task<IActionResult> LoadCircuit([FromBody] int id)
     {
-        return Ok(database.Circuits.Where(c => c.CircuitId == id).Include(c => c.Wires).ToList());
+        return Ok(database.Circuits.Where(c => c.CircuitId == id).Include(c => c.Components).Include(c => c.Wires).ToList());
     }
 }

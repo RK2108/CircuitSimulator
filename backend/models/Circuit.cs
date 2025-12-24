@@ -116,43 +116,6 @@ public class Circuit
         return branch;
     }
 
-    public bool DetectLoop(List<int> branch)
-    {
-        if (branch.Count > 1 && branch.First() == branch.Last())
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    public string ClassifyCircuit(List<List<int>> branches)
-    {
-        var loops = new List<List<int>>();
-
-        foreach (var branch in branches)
-        {
-            if (DetectLoop(branch))
-            {
-                loops.Add(branch);
-            }
-        }
-
-        if (loops.Count == 1)
-        {
-            return "Series Loop";
-        }
-        else if (loops.Count == 2)
-        {
-            if (loops[0].First() == loops[1].First() && loops[0].Last() == loops[1].Last())
-            {
-                return "Parallel Loops";
-            }
-        }
-        
-        return "Spider";
-    }
-
     public List<List<int>> GetCircuitStructure(List<int> TerminalNodes)
     {
         var CircuitStructure = new List<List<int>>();
@@ -199,17 +162,12 @@ public class Circuit
 
         foreach (var id in branch)
         {
-            foreach (var comp in Components)
+            var comp = Components.First(c => c.ComponentId == id);
+            if (comp is Resistor r)
             {
-                if (comp.ComponentId == id)
-                {
-                    if (comp is Resistor)
-                    {
-                        Resistor r = (Resistor)comp;
-                        resistance += r.Resistance;
-                    }
-                }
+                resistance += r.Resistance;
             }
+            
         }
 
         return resistance;
@@ -221,53 +179,16 @@ public class Circuit
 
         foreach (var resistance in resistances)
         {
-            inverse += 1 / resistance;
+            if (resistance != 0)
+            {
+                inverse += 1 / resistance;
+            }
         }
 
         return 1 / inverse;
     }
 
-    public double CalculateResistance()
-    {
-        var TerminalNodes = new List<int>();
-        foreach (var comp in Components)
-        {
-            if (GetConnectionCount(comp.ComponentId) >= 2)
-            {
-                if (TerminalNodes.Contains(comp.ComponentId) == false)
-                {
-                    TerminalNodes.Add(comp.ComponentId);
-                }
-            }
-        }
-
-        var CircuitStructure = GetCircuitStructure(TerminalNodes);
-
-        string type = ClassifyCircuit(CircuitStructure);
-
-        var BranchResistances = new List<double>();
-
-        foreach (var branch in CircuitStructure)
-        {
-            double res = BranchResistance(branch);
-            BranchResistances.Add(res);
-        }
-
-        double totalResistance = 0;
-
-        if (type == "Series Loop")
-        {
-            totalResistance = BranchResistances[0];
-        }
-        else if (type == "Parallel Loops" || type == "Spider")
-        {
-            totalResistance = ParallelResistance(BranchResistances);
-        }
-
-        return totalResistance;
-    }
-
-    public double GetVoltage()
+    public double GetCircuitVoltage()
     {
         double voltage = 0;
 
@@ -283,10 +204,97 @@ public class Circuit
         return voltage;
     }
 
-    public double GetCurrent(double voltage, double resistance)
+    public double GetBranchCurrents(double voltage, double resistance)
     {
         double current = voltage / resistance;
 
         return current;
+    }
+
+    public object SolveCircuit()
+    {
+        double circuitVoltage = GetCircuitVoltage();
+
+        var TerminalNodes = new List<int>();
+        foreach (var comp in Components)
+        {
+            if (GetConnectionCount(comp.ComponentId) >= 2)
+            {
+                if (TerminalNodes.Contains(comp.ComponentId) == false)
+                {
+                    TerminalNodes.Add(comp.ComponentId);
+                }
+            }
+        }
+
+        var branches = GetCircuitStructure(TerminalNodes);
+
+        var BranchResistances = new List<double>();
+
+        foreach (var branch in branches)
+        {
+            BranchResistances.Add(BranchResistance(branch));
+        }
+
+        double TotalResistance = ParallelResistance(BranchResistances);
+
+        double TotalCurrent = circuitVoltage / TotalResistance;
+
+        var components = new List<object>();
+
+        for (int i = 0; i < branches.Count; i++)
+        {
+            var branch = branches[i];
+
+            double resistance = BranchResistances[i];
+            double voltage = circuitVoltage;
+            double current = voltage / resistance;
+
+            foreach (var id in branch)
+            {
+                var comp = Components.First(c => c.ComponentId == id);
+
+                double compRes = 0;
+                if (comp is Resistor r)
+                {
+                    compRes = r.Resistance;
+                }
+                else if (comp is Lamp l)
+                {
+                    compRes = l.CalculateResistance(voltage);                  
+                }
+
+                double compVoltage = 0;
+                
+                if (comp is Battery b)
+                {
+                    compVoltage = b.Emf;
+                }
+                else
+                {
+                    compVoltage = compRes / resistance * voltage;
+                }
+
+                double compCurrent = current;
+
+                var component = new
+                {
+                    componentId = comp.ComponentId,
+                    voltage = compVoltage,
+                    current = compCurrent,
+                    resistance = compRes
+                };
+
+                components.Add(component);
+            }
+        }
+
+        var circuit = new
+        {
+            circuitVoltage,
+            components,
+        };
+
+        return circuit;
     }
 }
