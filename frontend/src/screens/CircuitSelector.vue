@@ -37,6 +37,8 @@
         
         circuit.circuitId = Id;
         circuit.name = Name;
+        circuit.components = [];
+        circuit.wires = [];
         router.push("/builder");
     }
 </script>

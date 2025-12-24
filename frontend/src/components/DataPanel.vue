@@ -39,7 +39,7 @@
           }) ?? [];
 
           const FormattedWires = RawCircuit.wires?.map((w) => ({
-            WireId: w.WireId,
+            WireId: w.wireId,
             StartId: w.startId,
             EndId: w.endId,
 
@@ -95,7 +95,7 @@
           }) ?? [];
 
           const FormattedWires = RawCircuit.wires?.map((w) => ({
-            WireId: w.WireId,
+            WireId: w.wireId,
             StartId: w.startId,
             EndId: w.endId,
 

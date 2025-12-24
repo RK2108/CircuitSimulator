@@ -38,7 +38,7 @@
     const selectedTool = ref(null);
     const selectedComp = ref(null);
     const nextWireId = ref(0);
-    const count = ref(0);
+    const count = ref(circuit.components.length + 1);
 
     function displayComponent(event){
         if (selectedTool.value !== null && selectedTool.value !== 'Wire'){
@@ -106,10 +106,12 @@
 
     
 	function connectComponents(id) {
-		const wireId = nextWireId.value++;
 		if (!selectedComp.value) {
 			selectedComp.value = id;
-		} else {
+		} 
+        else {
+            nextWireId.value++;
+            const wireId = nextWireId.value;
 			const startId = selectedComp.value;
 			const endId = id;
 
