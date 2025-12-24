@@ -36,10 +36,10 @@ async function LoadCircuit(id){
 
     const data = await response.json();
 
-    circuit.circuitId = data[0].circuitId
-    circuit.components = data[0].components
-    circuit.name = data[0].name
-    circuit.wires = data[0].wires 
+    circuit.circuitId = data.circuitId
+    circuit.components = data.components
+    circuit.name = data.name
+    circuit.wires = data.wires 
 
     router.push('/builder');
 }
