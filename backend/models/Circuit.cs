@@ -45,7 +45,7 @@ public class Circuit
         Components.Remove(comp);
     }
 
-    public int GetConnectionCount(int id) // finds the number of components the component is connected to
+    public int GetConnectionCount(int id) // Method that finds the number of components the component is connected to
     {
         int count = 0;
 
@@ -60,13 +60,13 @@ public class Circuit
         return count;
     }
 
-    public List<int> GetNeighbours(int currentNode)
+    public List<int> GetNeighbours(int currentNode) // Method that gets the all components connected to the paramaterised component
     {
         var neighbours = new List<int>();
 
         foreach (var wire in Wires)
         {
-            if (wire.StartId == currentNode)
+            if (wire.StartId == currentNode) // checks if they share a wire
             {
                 if (neighbours.Contains(wire.EndId) == false)
                 {
@@ -85,7 +85,7 @@ public class Circuit
         return neighbours;
     }
 
-    public List<int> TraverseBranch(int id, List<int> visited)
+    public List<int> TraverseBranch(int id, List<int> visited) // Method for finding a branch of components (for parallel circuits)
     {
         var branch = new List<int>();
         int currentNode = id;
@@ -116,11 +116,11 @@ public class Circuit
         return branch;
     }
 
-    public List<List<int>> GetCircuitStructure(List<int> TerminalNodes)
+    public List<List<int>> GetCircuitStructure(List<int> TerminalNodes) // Main BFS method for traversing a full circuit
     {
         var CircuitStructure = new List<List<int>>();
         var visited = new List<int>();
-        var queue = new Queue<int>();
+        var queue = new Queue<int>(); // A queue is used to traverse all components
 
         foreach (var id in TerminalNodes)
         {
@@ -147,7 +147,7 @@ public class Circuit
                 {
                     if (visited.Contains(neighbour) == false)
                     {
-                        queue.Enqueue(neighbour);
+                        queue.Enqueue(neighbour); // adds all neighbours of the specified component to the queue to be traversed
                     }
                 }
             }
@@ -156,7 +156,7 @@ public class Circuit
         return CircuitStructure;
     }
 
-    public double BranchResistance(List<int> branch)
+    public double BranchResistance(List<int> branch) // Method for returning the total resistance of a branch of components
     {
         double resistance = 0;
 
@@ -173,7 +173,7 @@ public class Circuit
         return resistance;
     }
 
-    public double ParallelResistance(List<double> resistances)
+    public double ParallelResistance(List<double> resistances) // Method for calculating the total resistance in the circuit
     {
         double inverse = 0;
 
@@ -188,7 +188,7 @@ public class Circuit
         return 1 / inverse;
     }
 
-    public double GetCircuitVoltage()
+    public double GetVoltage() // Method for returning the total voltage of a circuit
     {
         double voltage = 0;
 
@@ -204,16 +204,9 @@ public class Circuit
         return voltage;
     }
 
-    public double GetBranchCurrents(double voltage, double resistance)
+    public object SolveCircuit() // Main method to solve a circuit and create an object containing components and their key values
     {
-        double current = voltage / resistance;
-
-        return current;
-    }
-
-    public object SolveCircuit()
-    {
-        double circuitVoltage = GetCircuitVoltage();
+        double CircuitVoltage = GetVoltage();
 
         var TerminalNodes = new List<int>();
         foreach (var comp in Components)
@@ -238,61 +231,61 @@ public class Circuit
 
         double TotalResistance = ParallelResistance(BranchResistances);
 
-        double TotalCurrent = circuitVoltage / TotalResistance;
+        double TotalCurrent = CircuitVoltage / TotalResistance;
 
-        var components = new List<object>();
+        var SolvedComponents = new List<object>();
 
         for (int i = 0; i < branches.Count; i++)
         {
             var branch = branches[i];
 
             double resistance = BranchResistances[i];
-            double voltage = circuitVoltage;
+            double voltage = CircuitVoltage;
             double current = voltage / resistance;
 
             foreach (var id in branch)
             {
                 var comp = Components.First(c => c.ComponentId == id);
 
-                double compRes = 0;
+                double CompRes = 0;
                 if (comp is Resistor r)
                 {
-                    compRes = r.Resistance;
+                    CompRes = r.Resistance;
                 }
                 else if (comp is Lamp l)
                 {
-                    compRes = l.CalculateResistance(voltage);                  
+                    CompRes = l.CalculateResistance(voltage);                  
                 }
 
-                double compVoltage = 0;
+                double CompVoltage = 0;
                 
                 if (comp is Battery b)
                 {
-                    compVoltage = b.Emf;
+                    CompVoltage = b.Emf;
                 }
                 else
                 {
-                    compVoltage = compRes / resistance * voltage;
+                    CompVoltage = CompRes / resistance * voltage;
                 }
 
-                double compCurrent = current;
+                double CompCurrent = current;
 
                 var component = new
                 {
                     componentId = comp.ComponentId,
-                    voltage = compVoltage,
-                    current = compCurrent,
-                    resistance = compRes
+                    voltage = CompVoltage,
+                    current = CompCurrent,
+                    resistance = CompRes
                 };
 
-                components.Add(component);
+                SolvedComponents.Add(component);
             }
         }
 
         var circuit = new
         {
-            circuitVoltage,
-            components,
+            CircuitVoltage,
+            SolvedComponents,
         };
 
         return circuit;

@@ -24,6 +24,12 @@ public abstract class Component
         set;
     }
 
+    public int CircuitId
+    {
+        get;
+        set;
+    }
+
     public Component(int componentId, string componentType, int x, int y)
     {
         ComponentType = componentType;
