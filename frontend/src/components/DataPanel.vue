@@ -4,10 +4,16 @@
         <button class="solve-btn" @click="SimulateCircuit">Simulate</button>
         <button class="solve-btn" @click="SaveCircuit">Save</button>
         <p>Circuit Id: {{ circuit.circuitId }}</p>
-        <div v-if="result" class="result-box">
-            <p>Resistance: {{ result.resistance }}</p>
-            <p>Voltage: {{ result.voltage }}</p>
-            <p>Current: {{ result.current }}</p>
+        <div v-if="comp && !result" class="result-box">
+            <p>Resistance: {{ comp.resistance }}</p>
+            <p>Voltage: {{ comp.voltage }}</p>
+            <p>Power: {{ comp.power }}</p>
+        </div>
+        <div v-else-if="result" class="result-box">
+            <p>Component Id: {{ comp.componentId }}</p>
+            <p>Resistance: {{ result.solvedComponents[comp.componentId - 1].resistance }}</p>
+            <p>Voltage: {{ result.solvedComponents[comp.componentId - 1].voltage }}</p>
+            <p>Current: {{ result.solvedComponents[comp.componentId - 1].current}}</p>
         </div>
     </div>
 </template>
@@ -17,6 +23,7 @@
     import { circuit } from '@/circuit';
 
     const result = ref(null);
+    const comp = ref(null);
 
     async function SimulateCircuit(){
       try {
@@ -129,6 +136,8 @@
           alert(err);
       }
     }
+
+    defineExpose({comp});
 </script>
 
 <style scoped>

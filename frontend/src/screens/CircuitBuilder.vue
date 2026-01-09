@@ -1,8 +1,8 @@
 <template>
     <div class="container">
         <Pallete @select="tool = $event"/>
-        <Canvas ref="canvas"></Canvas>
-        <DataPanel/>
+        <Canvas @component="comp = $event" ref="canvas"></Canvas>
+        <DataPanel ref="data"/>
     </div>
 </template>
 
@@ -13,11 +13,19 @@
     import { ref, watch } from 'vue';
 
     const tool = ref(null);
+    const comp = ref(null);
     const canvas = ref(null);
+    const data = ref(null);
 
     watch (tool, (newVal) => {
         if (canvas.value){
             canvas.value.selectedTool = newVal;
+        }
+    });
+
+    watch (comp, (newVal) => {
+        if (data.value){
+            data.value.comp = newVal;
         }
     });
 

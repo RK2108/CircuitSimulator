@@ -39,6 +39,8 @@
     const selectedComp = ref(null);
     const nextWireId = ref(0);
     const count = ref(circuit.components.length + 1);
+    
+    const emit = defineEmits(['component']);
 
     function displayComponent(event){
         if (selectedTool.value !== null && selectedTool.value !== 'Wire'){
@@ -99,9 +101,12 @@
         if (selectedTool.value == 'Delete'){
             deleteComponent(comp.componentId);
         }
-        else if (selectedTool.value === 'Wire') {
+        
+        if (selectedTool.value === 'Wire') {
 			connectComponents(comp.componentId);
 		}
+
+        emit("component", comp);
     }
 
     

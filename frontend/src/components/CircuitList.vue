@@ -46,4 +46,11 @@ async function LoadCircuit(id){
 
 </script>
 
-<style scoped></style>
+<style scoped>
+    div {
+        border: 1px solid black;
+        border-radius: 10px;
+        padding: 6px;
+    }
+
+</style>
