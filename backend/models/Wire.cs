@@ -18,6 +18,12 @@ public class Wire
         set;
     }
 
+    public int CircuitId
+    {
+        get;
+        set;
+    }
+
     public Wire(int wireId, int startId, int endId)
     {
         WireId = wireId;

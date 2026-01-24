@@ -217,7 +217,7 @@ public class CircuitController : ControllerBase
             }
         }
 
-        var wires = database.Wires;
+        var wires = database.Wires.Where(w => w.CircuitId == CircuitId);
 
         return Ok(new   // returns full circuit
         {
