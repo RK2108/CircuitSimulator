@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http.HttpResults;
+
 public class Circuit
 {
     public string Name
@@ -159,6 +161,7 @@ public class Circuit
     public double BranchResistance(List<int> branch) // Method for returning the total resistance of a branch of components
     {
         double resistance = 0;
+        double voltage = GetVoltage();
 
         foreach (var id in branch)
         {
@@ -167,7 +170,13 @@ public class Circuit
             {
                 resistance += r.Resistance;
             }
-            
+            else if (comp is Lamp l)
+            {
+                if (l.CalculateResistance(voltage) > 0)
+                {
+                    resistance += l.CalculateResistance(voltage);
+                }
+            }
         }
 
         return resistance;
