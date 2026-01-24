@@ -1,50 +1,16 @@
 <template>
     <button @click="NewCircuit">New Circuit</button>
-    <CircuitList @nextid="handlenextid"/>
+    <CircuitList/>
 </template>
 
 <script setup>
     import CircuitList from '@/components/CircuitList.vue';
-    import { circuit } from '@/circuit';
     import { useRouter } from 'vue-router';
-    import { ref } from 'vue';
 
     const router = useRouter();
 
-    function handlenextid(id){
-        NextId.value = id
-    }
-
-    const NextId = ref(1);
-
     async function NewCircuit(){
-        const Name = window.prompt("Enter Circuit Name");
-
-        const CircuitInfo = {
-            circuitId: NextId.value,
-            name: Name,
-            components: [],
-            wires: []
-        }
-        
-        try {
-            await fetch(
-                'http://localhost:5107/api/circuit/create', 
-                {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(CircuitInfo),
-                },
-            );
-        }
-        catch(err){
-            alert(err);
-        }
-        
-        circuit.circuitId = NextId.value;
-        circuit.name = Name;
-        circuit.components = [];
-        circuit.wires = [];
+        // const Name = window.prompt("Enter Circuit Name");
         router.push("/builder");
     }
 </script>

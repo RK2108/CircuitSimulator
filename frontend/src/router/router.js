@@ -4,7 +4,8 @@ import CircuitSelector from "@/screens/CircuitSelector.vue";
 
 const routes = [
     {path: "/", component: CircuitSelector},
-    {path: "/builder", component: CircuitBuilder}
+    {path: "/builder", component: CircuitBuilder},
+    {path: "/builder/:id", component: CircuitBuilder}
 ]
 
 export const router = createRouter({

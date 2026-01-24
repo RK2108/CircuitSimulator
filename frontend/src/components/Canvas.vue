@@ -32,14 +32,20 @@
 </template>
 
 <script setup>
-    import { ref } from 'vue';
-    import { circuit } from '@/circuit';
+    import { ref, computed } from 'vue';
+
+    const { circuit } = defineProps({
+        circuit: {
+            type: Object,
+            required: true
+        }
+    });
 
     const selectedTool = ref(null);
     const selectedComp = ref(null);
     const nextWireId = ref(0);
-    const count = ref(circuit.components.length + 1);
-    
+    const count = computed(() => circuit.components.length + 1);
+
     const emit = defineEmits(['component']);
 
     function displayComponent(event){
