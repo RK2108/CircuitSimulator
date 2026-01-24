@@ -1,21 +1,27 @@
 <template>
     <button @click="NewCircuit">New Circuit</button>
-    <CircuitList/>
+    <CircuitList @nextid="handlenextid"/>
 </template>
 
 <script setup>
     import CircuitList from '@/components/CircuitList.vue';
     import { circuit } from '@/circuit';
     import { useRouter } from 'vue-router';
+    import { ref } from 'vue';
 
     const router = useRouter();
 
+    function handlenextid(id){
+        NextId.value = id
+    }
+
+    const NextId = ref(1);
+
     async function NewCircuit(){
-        const Id = window.prompt("Enter Circuit Id");
         const Name = window.prompt("Enter Circuit Name");
 
         const CircuitInfo = {
-            circuitId: Id,
+            circuitId: NextId.value,
             name: Name,
             components: [],
             wires: []
@@ -35,7 +41,7 @@
             alert(err);
         }
         
-        circuit.circuitId = Id;
+        circuit.circuitId = NextId.value;
         circuit.name = Name;
         circuit.components = [];
         circuit.wires = [];

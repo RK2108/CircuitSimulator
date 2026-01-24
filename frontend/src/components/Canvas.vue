@@ -48,7 +48,7 @@
                 circuit.components.push({
                     componentId: count.value,
                     componentType: selectedTool.value,
-                    resistance: 10,
+                    resistance: 0,
                     voltage: 0,
                     power: 0,
                     x: event.offsetX - 30,
@@ -60,7 +60,7 @@
                     componentId: count.value,
                     componentType: selectedTool.value,
                     resistance: 0,
-                    voltage: 9,
+                    voltage: 0,
                     power: 0,
                     x: event.offsetX - 30,
                     y: event.offsetY - 20,
@@ -72,7 +72,7 @@
                     componentType: selectedTool.value,
                     resistance: 0,
                     voltage: 0,
-                    power: 12,
+                    power: 0,
                     x: event.offsetX - 30,
                     y: event.offsetY - 20,
                 });

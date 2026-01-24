@@ -14,10 +14,19 @@ const router = useRouter();
 
 const result = ref(null);
 
+const emit = defineEmits(['nextid']);
+
 onMounted(async () => {
     try {
         const response = await fetch('http://localhost:5107/api/circuit/GetAllCircuits');
         result.value = await response.json();
+        
+        let next = 1;
+        for (var res in result.value){
+            next++;
+        }
+
+        emit("nextid", next);
     }
     catch(err){
         alert(err);

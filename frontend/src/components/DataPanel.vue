@@ -3,16 +3,18 @@
         <h3>Circuit Data</h3>
         <button class="solve-btn" @click="SimulateCircuit">Simulate</button>
         <button class="solve-btn" @click="SaveCircuit">Save</button>
-        <p>Circuit Id: {{ circuit.circuitId }}</p>
-        <div v-if="comp && !result" class="result-box">
-            <p>Resistance: {{ comp.resistance }}</p>
-            <p>Voltage: {{ comp.voltage }}</p>
-            <p>Power: {{ comp.power }}</p>
+        <h3>Input Values</h3>
+        <div v-if="comp" class="result-box">
+            <p>ComponentId: {{ comp.componentId }}</p>
+            <label v-if="comp.componentType === 'Battery'">Voltage: <input required type="number" v-model="voltageval"></label>
+            <label v-else-if="comp.componentType === 'Resistor'">Resistance: <input required type="number" v-model="resval"></label>
+            <label v-else-if="comp.componentType === 'Lamp'">Power: <input required type="number" v-model="powerval"></label>
         </div>
-        <div v-else-if="result" class="result-box">
+        <h3 v-if="result">Output Values</h3>
+        <div v-if="result" class="result-box">
             <p>Component Id: {{ comp.componentId }}</p>
-            <p>Resistance: {{ result.solvedComponents[comp.componentId - 1].resistance }}</p>
             <p>Voltage: {{ result.solvedComponents[comp.componentId - 1].voltage }}</p>
+            <p>Resistance: {{ result.solvedComponents[comp.componentId - 1].resistance }}</p>
             <p>Current: {{ result.solvedComponents[comp.componentId - 1].current}}</p>
         </div>
     </div>
@@ -20,10 +22,34 @@
 
 <script setup>
     import { toRaw, ref } from 'vue';
+    import { watch } from 'vue';
     import { circuit } from '@/circuit';
 
     const result = ref(null);
     const comp = ref(null);
+
+    const resval = ref(0);
+    const powerval = ref(0);
+    const voltageval = ref(0);
+
+    watch(resval, (newval) => {
+        const index = circuit.components.findIndex(c => c.componentId === comp.value.componentId)
+        console.log(index);
+
+        circuit.components[index].resistance = newval;
+    });
+
+    watch(powerval, (newval) =>{
+        const index = circuit.components.findIndex(c => c.componentId == comp.value.componentId)
+        console.log(index);
+        circuit.components[index].power = newval;
+    })
+
+    watch(voltageval, (newval) =>{
+        const index = circuit.components.findIndex(c => c.componentId == comp.value.componentId)
+        console.log(index);
+        circuit.components[index].voltage = newval;
+    })
 
     async function SimulateCircuit(){
       try {
