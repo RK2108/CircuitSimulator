@@ -3,11 +3,15 @@
         <button @click="router.push('/')">Back</button>
         <button @click="SimulateCircuit">Simulate</button>
         <button @click="SaveCircuit">Save</button>
+        <button @click="help = true">Help</button>
     </nav>
     <div class="container">
-        <Pallete @select="tool = $event" :circuit="circuit"/>
-        <Canvas @component="comp = $event" :circuit="circuit" ref="canvas"></Canvas>
-        <DataPanel :circuit="circuit" ref="data"/>
+        <div class="builder">
+            <Pallete @select="tool = $event" :circuit="circuit"/>
+            <Canvas @component="comp = $event" :circuit="circuit" ref="canvas"></Canvas>
+            <DataPanel :circuit="circuit" ref="data"/>
+        </div>
+        <HelpModal v-if="help" @close="help = false"></HelpModal>
     </div>
 </template>
 
@@ -15,6 +19,7 @@
     import Pallete from '@/components/Pallete.vue';
     import Canvas from '@/components/Canvas.vue';
     import DataPanel from '@/components/DataPanel.vue';
+    import HelpModal from '@/components/HelpModal.vue';
     import { onBeforeMount, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
 
@@ -23,6 +28,8 @@
     const canvas = ref(null);
     const data = ref(null);
     const result = ref(null);
+
+    const help = ref(false);
 
     const router = useRouter();
     const route = useRoute();
@@ -51,9 +58,7 @@
             circuit.value.circuitId = data.circuitId
             circuit.value.components = data.components
             circuit.value.name = data.name
-            circuit.value.wires = data.wires 
-
-            console.log(circuit.value)
+            circuit.value.wires = data.wires
         }
     });
 
@@ -133,9 +138,8 @@
 
     async function SaveCircuit(){
       try {
-          const RawCircuit = toRaw(circuit);
           
-          const FormattedComponents = RawCircuit.components?.map((c) => {
+          const FormattedComponents = circuit.value.components?.map((c) => {
 
               const component = {
                   id: c.componentId, 
@@ -151,7 +155,7 @@
 
           }) ?? [];
 
-          const FormattedWires = RawCircuit.wires?.map((w) => ({
+          const FormattedWires = circuit.value.wires?.map((w) => ({
             WireId: w.wireId,
             StartId: w.startId,
             EndId: w.endId,
@@ -159,8 +163,8 @@
           })) ?? [];
 
           const FormattedCircuit = {
-              CircuitId: circuit.circuitId,
-              name: circuit.name ?? 'Untitled Circuit',
+              CircuitId: circuit.value.circuitId,
+              name: circuit.value.name ?? 'Untitled Circuit',
               components: FormattedComponents,
               wires: FormattedWires,
           };
@@ -189,7 +193,7 @@
 </script>
 
 <style scoped>
-    .container {
+    .builder {
         color: #111827;
         font-family: 'Inter', sans-serif;
         display: flex;

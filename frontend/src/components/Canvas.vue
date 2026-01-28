@@ -17,6 +17,7 @@
                 @click="handleClicks(comp)">
                 <rect 
                     class="component"
+                    :class="{selected: selectedComp === comp.componentId}"
                     :x="comp.x"
                     :y="comp.y"
                     width="60"
@@ -83,8 +84,6 @@
                     y: event.offsetY - 20,
                 });
             }
-
-            count.value++;
         }
     }
 
@@ -200,4 +199,8 @@
 		stroke: white;
 		stroke-width: 0.5px;
 	}
+
+    .selected {
+        stroke: red;
+    }
 </style>
