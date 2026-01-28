@@ -4,9 +4,9 @@
         <h3>Input Values</h3>
         <div v-if="comp" class="result-box">
             <p>ComponentId: {{ comp.componentId }}</p>
-            <label v-if="comp.componentType === 'Battery'">Voltage: <input required type="number" v-model="voltageval"></label>
-            <label v-else-if="comp.componentType === 'Resistor'">Resistance: <input required type="number" v-model="resval"></label>
-            <label v-else-if="comp.componentType === 'Lamp'">Power: <input required type="number" v-model="powerval"></label>
+            <label v-if="comp.componentType === 'Battery'">Voltage: <input :value="comp.voltage" @input="voltageval = $event.target.value" required type="number"></label>
+            <label v-else-if="comp.componentType === 'Resistor'">Resistance: <input :value="comp.resistance" @input="resval = $event.target.value" required type="number"></label>
+            <label v-else-if="comp.componentType === 'Lamp'">Power: <input :value="comp.power" @input="powerval = $event.target.value" required type="number"></label>
         </div>
         <h3 v-if="result">Output Values</h3>
         <div v-if="result" class="result-box">
@@ -40,19 +40,19 @@
         const index = circuit.components.findIndex(c => c.componentId === comp.value.componentId)
         console.log(index);
 
-        circuit.value.components[index].resistance = newval;
+        circuit.components[index].resistance = newval;
     });
 
     watch(powerval, (newval) =>{
         const index = circuit.components.findIndex(c => c.componentId == comp.value.componentId)
         console.log(index);
-        circuit.value.components[index].power = newval;
+        circuit.components[index].power = newval;
     })
 
     watch(voltageval, (newval) =>{
         const index = circuit.components.findIndex(c => c.componentId == comp.value.componentId)
         console.log(index);
-        circuit.value.components[index].voltage = newval;
+        circuit.components[index].voltage = newval;
     })
 
     defineExpose({comp, result});

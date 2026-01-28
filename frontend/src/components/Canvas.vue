@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <svg class="canvas" @click="displayComponent">
+        <svg class="canvas" @click.self="DisplayComponent">
             <line
 				v-for="wire in circuit.wires"
 				:key="wire.wireId"
@@ -14,7 +14,9 @@
             <g 
                 v-for="comp in circuit.components"
                 :key="comp.componentId"
-                @click="handleClicks(comp)">
+                @click.left="deleteComponent(comp.componentId)"
+                @click.right.prevent="connectComponents(comp.componentId)"
+                @click="emit('component', comp)">
                 <rect 
                     class="component"
                     :class="{selected: selectedComp === comp.componentId}"
@@ -45,12 +47,24 @@
     const selectedTool = ref(null);
     const selectedComp = ref(null);
     const nextWireId = ref(0);
-    const count = computed(() => circuit.components.length + 1);
+    
+    const highestId = () => {
+        let highestId = 0
+        for(var comp of circuit.components){
+            if (comp.componentId > highestId){
+                highestId = comp.componentId;
+            }
+        }
+
+        return highestId
+    }
+
+    const count = computed(() => highestId() + 1);
 
     const emit = defineEmits(['component']);
 
-    function displayComponent(event){
-        if (selectedTool.value !== null && selectedTool.value !== 'Wire'){
+    function DisplayComponent(event){
+        if (selectedTool.value !== null){
             if (selectedTool.value == 'Resistor'){
                 circuit.components.push({
                     componentId: count.value,
@@ -102,19 +116,6 @@
         }
 	}
 
-    function handleClicks(comp){
-        if (selectedTool.value == 'Delete'){
-            deleteComponent(comp.componentId);
-        }
-        
-        if (selectedTool.value === 'Wire') {
-			connectComponents(comp.componentId);
-		}
-
-        emit("component", comp);
-    }
-
-    
 	function connectComponents(id) {
 		if (!selectedComp.value) {
 			selectedComp.value = id;
@@ -127,6 +128,7 @@
 
 			if (startId === endId) {
 				selectedComp.value = null;
+                alert("Cannot loop components")
 				return;
 			}
 
@@ -139,6 +141,9 @@
 			if (!duplicate) {
 				circuit.wires.push({ wireId, startId, endId });
 			}
+            else{
+                alert("Cannot connect components more than once")
+            }
 
 			selectedComp.value = null;
 		}

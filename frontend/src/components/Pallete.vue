@@ -5,7 +5,6 @@
             <label><input type="radio" value="Battery" v-model="selected"></input> Battery</label>
             <label><input type="radio" value="Resistor" v-model="selected"></input> Resistor</label>
             <label><input type="radio" value="Lamp" v-model="selected"></input> Lamp</label>
-            <label><input type="radio" value="Wire" v-model="selected"></input> Wire</label>
             <label><input type="radio" value="Delete" v-model="selected"></input> Delete</label>
         </div>
     </div>
