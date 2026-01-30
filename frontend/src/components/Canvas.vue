@@ -48,10 +48,10 @@
     const selectedComp = ref(null);
     const nextWireId = ref(0);
     
-    const highestId = () => {
+    const HighesCompId = () => {
         let highestId = 0
         for(var comp of circuit.components){
-            if (comp.componentId > highestId){
+            if (comp.componentId >= highestId){
                 highestId = comp.componentId;
             }
         }
@@ -59,7 +59,20 @@
         return highestId
     }
 
-    const count = computed(() => highestId() + 1);
+    const CompCount = computed(() => HighesCompId() + 1);
+
+    const HighestWireId = () => {
+        let highestId = 0
+        for(var wire of circuit.wires){
+            if (wire.wireId >= highestId){
+                highestId = wire.wireId
+            }
+        }
+
+        return highestId
+    }
+
+    const WireCount = computed(() => HighestWireId() + 1);
 
     const emit = defineEmits(['component']);
 
@@ -67,7 +80,7 @@
         if (selectedTool.value !== null){
             if (selectedTool.value == 'Resistor'){
                 circuit.components.push({
-                    componentId: count.value,
+                    componentId: CompCount.value,
                     componentType: selectedTool.value,
                     resistance: 0,
                     voltage: 0,
@@ -78,7 +91,7 @@
             }
             else if (selectedTool.value == 'Battery'){
                 circuit.components.push({
-                    componentId: count.value,
+                    componentId: CompCount.value,
                     componentType: selectedTool.value,
                     resistance: 0,
                     voltage: 0,
@@ -89,7 +102,7 @@
             }
             else if (selectedTool.value == 'Lamp'){
                 circuit.components.push({
-                    componentId: count.value,
+                    componentId: CompCount.value,
                     componentType: selectedTool.value,
                     resistance: 0,
                     voltage: 0,
@@ -121,8 +134,7 @@
 			selectedComp.value = id;
 		} 
         else {
-            nextWireId.value++;
-            const wireId = nextWireId.value;
+            const wireId = WireCount.value;
 			const startId = selectedComp.value;
 			const endId = id;
 

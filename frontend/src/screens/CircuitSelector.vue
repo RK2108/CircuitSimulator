@@ -1,5 +1,5 @@
 <template>
-    <button @click="NewCircuit">New Circuit</button>
+    <button @click="router.push('/builder');">New Circuit</button>
     <CircuitList/>
 </template>
 
@@ -8,11 +8,7 @@
     import { useRouter } from 'vue-router';
 
     const router = useRouter();
-
-    async function NewCircuit(){
-        // const Name = window.prompt("Enter Circuit Name");
-        router.push("/builder");
-    }
+    
 </script>
 
 <style scoped>
