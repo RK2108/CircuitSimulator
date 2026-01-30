@@ -26,7 +26,7 @@ public class Wire
 
     public Wire(int wireId, int startId, int endId)
     {
-        WireId = wireId;
+        this.WireId = wireId;
         StartId = startId;
         EndId = endId;
     }

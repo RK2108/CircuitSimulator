@@ -35,6 +35,8 @@ public class CircuitDbContext : DbContext
         modelBuilder.Entity<Component>().HasKey(c => c.ComponentId);
         modelBuilder.Entity<Wire>().HasKey(w => w.WireId);
 
+        modelBuilder.Entity<Wire>().Property(w => w.WireId).ValueGeneratedNever();
+
         modelBuilder.Entity<Component>().HasDiscriminator<string>("ComponentType")
                                         .HasValue<Resistor>("Resistor")
                                         .HasValue<Battery>("Battery")

@@ -1,6 +1,6 @@
 public class WireDTO
 {
-    public int Id
+    public int WireId
     {
         get;
         set;

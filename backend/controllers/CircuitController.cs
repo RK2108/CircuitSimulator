@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.Marshalling;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -64,6 +66,7 @@ public class CircuitController : ControllerBase
 
             if (comp != null)
             {
+                comp.CircuitId = circuitDTO.CircuitId;
                 circuit.AddComponent(comp);
             }
         }
@@ -84,7 +87,8 @@ public class CircuitController : ControllerBase
             if (startExists && endExists)
             {
                 
-                Wire w = new Wire(wireDTO.Id, wireDTO.StartId, wireDTO.EndId);
+                Wire w = new Wire(wireDTO.WireId, wireDTO.StartId, wireDTO.EndId);
+                w.CircuitId = circuitDTO.CircuitId;
                 circuit.AddWire(w);
             }
         }
@@ -99,22 +103,106 @@ public class CircuitController : ControllerBase
         Circuit payload = ConvertFromDTO(circuitDto);
 
         var circuit = database.Circuits.Include(c => c.Components) // checks if the circuit is already stored in the database (failsafe)
-                                        .Include(c => c.Wires)
-                                        .FirstOrDefault(c => c.CircuitId == payload.CircuitId);
+                                            .Include(c => c.Wires)
+                                            .First(c => c.CircuitId == payload.CircuitId);
 
-        if (circuit != null) // if already stored, it is removed
+        // PATCH Components //
+
+        // Adding New Components //
+
+        circuit.Name = payload.Name;
+
+        foreach (var component in payload.Components)
         {
-            database.Wires.RemoveRange(circuit.Wires);
-            database.Components.RemoveRange(circuit.Components);
-            database.Circuits.Remove(circuit);
-            await database.SaveChangesAsync();
+            var ExistingComp = circuit.Components.FirstOrDefault(c => c.ComponentId == component.ComponentId);
+
+            if (ExistingComp == null)
+            {
+                Component NewComp;
+
+                switch (component)
+                {
+                    case Resistor r:
+                        NewComp = new Resistor(r.ComponentId, r.Resistance, r.X, r.Y);
+                        break;
+                    case Battery b:
+                        NewComp = new Battery(b.ComponentId, b.Emf, b.X, b.Y);
+                        break;
+                    case Lamp l:
+                        NewComp = new Lamp(l.ComponentId, l.Power, l.X, l.Y);
+                        break;
+                    default:
+                        continue;
+                }
+
+                NewComp.CircuitId = payload.CircuitId;
+
+                database.Components.Add(NewComp);
+            }
+            // Editing Saved Components //
+            else
+            {
+                ExistingComp.X = component.X;
+                ExistingComp.Y = component.Y;
+
+                switch (ExistingComp)
+                {
+                    case Resistor r:
+                        r.Resistance = ((Resistor)component).Resistance;
+                        break;
+                    case Battery b:
+                        b.Emf = ((Battery)component).Emf;
+                        break;
+                    case Lamp l:
+                        l.Power = ((Lamp)component).Power;
+                        break;
+                }
+            }
         }
 
-        await database.Circuits.AddAsync(payload); // regardless if it is already stored, the updated circuit will be saved
+        // Deleting Removed Components //
+
+        var PayloadCompIDs = new List<int>();
+
+        foreach (var comp in payload.Components)
+        {
+            PayloadCompIDs.Add(comp.ComponentId);
+        }
+
+        var ComponentsToRemove = circuit.Components.Where(c => !PayloadCompIDs.Contains(c.ComponentId));
+
+        database.RemoveRange(ComponentsToRemove);
+
+        // PATCH Wires //
+
+        foreach (var wire in payload.Wires)
+        {
+            var ExistingWire = circuit.Wires.FirstOrDefault(w => w.WireId == wire.WireId);
+
+            if (ExistingWire == null)
+            {
+                var NewWire = new Wire(wire.WireId, wire.StartId, wire.EndId);
+                NewWire.CircuitId = payload.CircuitId;
+                circuit.Wires.Add(NewWire);
+            }
+        }
+
+        var PayloadWireIDs = new List<int>();
+
+        foreach (var wire in payload.Wires)
+        {
+            PayloadWireIDs.Add(wire.WireId);
+        }
+
+        var WiresToRemove = circuit.Wires.Where(w => !PayloadWireIDs.Contains(w.WireId));
+
+        database.RemoveRange(WiresToRemove);
+
         await database.SaveChangesAsync();
 
         return Ok("Circuit has been saved");
     }
+    
 
     [HttpPost("create")]
     public async Task<IActionResult> CreateCircuit([FromBody] CircuitDTO circuitDto) // Method for creating a circuit and storing it initially
@@ -130,7 +218,9 @@ public class CircuitController : ControllerBase
             await database.Circuits.AddAsync(circuit);
             await database.SaveChangesAsync();
 
-            return Ok("Circuit Created");
+            var id = circuit.CircuitId;
+
+            return Ok(id);
         }
     }
 
