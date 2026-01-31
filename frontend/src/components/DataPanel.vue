@@ -44,20 +44,16 @@
 
     watch(resval, (newval) => {
         const index = circuit.components.findIndex(c => c.componentId === comp.value.componentId)
-        console.log(index);
-
         circuit.components[index].resistance = newval;
     });
 
     watch(powerval, (newval) =>{
         const index = circuit.components.findIndex(c => c.componentId == comp.value.componentId)
-        console.log(index);
         circuit.components[index].power = newval;
     })
 
     watch(voltageval, (newval) =>{
         const index = circuit.components.findIndex(c => c.componentId == comp.value.componentId)
-        console.log(index);
         circuit.components[index].voltage = newval;
     })
 
