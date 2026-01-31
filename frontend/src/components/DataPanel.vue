@@ -10,20 +10,26 @@
         </div>
         <h3 v-if="result">Output Values</h3>
         <div v-if="result" class="result-box">
-            <p>Component Id: {{ comp.componentId }}</p>
-            <p>Voltage: {{ result.solvedComponents[comp.componentId - 1].voltage }}</p>
-            <p>Resistance: {{ result.solvedComponents[comp.componentId - 1].resistance }}</p>
-            <p>Current: {{ result.solvedComponents[comp.componentId - 1].current}}</p>
+            <p>Component Id: {{ result.solvedComponents[SolvedComp].componentId }}</p>
+            <p>Voltage: {{ result.solvedComponents[SolvedComp].voltage }}</p>
+            <p>Resistance: {{ result.solvedComponents[SolvedComp].resistance }}</p>
+            <p>Current: {{ result.solvedComponents[SolvedComp].current}}</p>
         </div>
     </div>
 </template>
 
 <script setup>
     import { ref } from 'vue';
-    import { watch } from 'vue';
+    import { computed, watch } from 'vue';
 
     const result = ref(null);
     const comp = ref(null);
+
+    const SolvedComp = computed(() => {
+        if (result.value?.solvedComponents && comp.value){
+          return result.value.solvedComponents.findIndex(c => c.componentId == comp.value.componentId);
+        }
+    });
 
     const resval = ref(0);
     const powerval = ref(0);

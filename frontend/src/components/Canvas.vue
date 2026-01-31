@@ -46,7 +46,6 @@
 
     const selectedTool = ref(null);
     const selectedComp = ref(null);
-    const nextWireId = ref(0);
     
     const HighesCompId = () => {
         let highestId = 0
