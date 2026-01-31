@@ -99,13 +99,7 @@ public class Circuit
 
             var neighbours = GetNeighbours(currentNode);
 
-            for (int i=0; i < neighbours.Count - 1; i++)
-            {
-                if (visited.Contains(neighbours[i]))
-                {
-                    neighbours.Remove(neighbours[i]);
-                }
-            }
+            neighbours.RemoveAll(n => visited.Contains(n));
 
             if (neighbours.Count == 0)
             {
@@ -236,6 +230,11 @@ public class Circuit
         foreach (var branch in branches)
         {
             BranchResistances.Add(BranchResistance(branch));
+        }
+
+        if (branches.Any(b => BranchResistance(b) == 0))
+        {
+            throw new InvalidOperationException();
         }
 
         double TotalResistance = ParallelResistance(BranchResistances);

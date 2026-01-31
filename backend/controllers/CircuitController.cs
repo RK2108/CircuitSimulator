@@ -43,9 +43,13 @@ public class CircuitController : ControllerBase
 
             return Ok(SolvedCircuit); 
         }
+        catch (InvalidOperationException)
+        {
+            return BadRequest("Infinite Values: check component input values");        
+        }
         catch (ArithmeticException)
         {
-            return BadRequest("Invalid component input values");
+            return BadRequest("Math Error");
         }
         catch (Exception)
         {
