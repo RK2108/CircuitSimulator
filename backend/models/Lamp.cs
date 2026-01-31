@@ -1,18 +1,21 @@
-public class Lamp : Component
+namespace backend.models
 {
-    public double Power
+    public class Lamp : Component
     {
-        get;
-        set;
-    }
+        public double Power
+        {
+            get;
+            set;
+        }
 
-    public Lamp(int componentId, double power, int x, int y) : base(componentId, "Lamp", x, y)
-    {
-        Power = power;
-    }
+        public Lamp(int componentId, double power, int x, int y) : base(componentId, "Lamp", x, y)
+        {
+            Power = power;
+        }
 
-    public double CalculateResistance(double voltage)
-    {
-        return Math.Pow(voltage, 2) / Power;
+        public double CalculateResistance(double voltage)
+        {
+            return Math.Pow(voltage, 2) / Power;
+        }
     }
 }

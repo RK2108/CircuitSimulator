@@ -1,13 +1,16 @@
-public class Battery : Component
+namespace backend.models
 {
-    public double Emf
+    public class Battery : Component
     {
-        get;
-        set;
-    }
+        public double Emf
+        {
+            get;
+            set;
+        }
 
-    public Battery(int componentId, double emf, int x, int y) : base(componentId, "Battery", x, y)
-    {
-        Emf = emf;
+        public Battery(int componentId, double emf, int x, int y) : base(componentId, "Battery", x, y)
+        {
+            Emf = emf;
+        }
     }
 }

@@ -1,18 +1,21 @@
-public class Resistor : Component
+namespace backend.models
 {
-    public double Resistance
+    public class Resistor : Component
     {
-        get;
-        set;
-    }
+        public double Resistance
+        {
+            get;
+            set;
+        }
 
-    public Resistor(int componentId, double resistance, int x, int y) : base(componentId, "Resistor", x, y)
-    {
-        Resistance = resistance;
-    }
+        public Resistor(int componentId, double resistance, int x, int y) : base(componentId, "Resistor", x, y)
+        {
+            Resistance = resistance;
+        }
 
-    public double GetResistance()
-    {
-        return Resistance;
+        public double GetResistance()
+        {
+            return Resistance;
+        }
     }
 }

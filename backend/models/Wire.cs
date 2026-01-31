@@ -1,33 +1,36 @@
-public class Wire
+namespace backend.models
 {
-    public int WireId
+    public class Wire
     {
-        get;
-        set;
-    }
+        public int WireId
+        {
+            get;
+            set;
+        }
 
-    public int StartId
-    {
-        get;
-        set;
-    }
+        public int StartId
+        {
+            get;
+            set;
+        }
 
-    public int EndId
-    {
-        get;
-        set;
-    }
+        public int EndId
+        {
+            get;
+            set;
+        }
 
-    public int CircuitId
-    {
-        get;
-        set;
-    }
+        public int CircuitId
+        {
+            get;
+            set;
+        }
 
-    public Wire(int wireId, int startId, int endId)
-    {
-        this.WireId = wireId;
-        StartId = startId;
-        EndId = endId;
+        public Wire(int wireId, int startId, int endId)
+        {
+            this.WireId = wireId;
+            StartId = startId;
+            EndId = endId;
+        }
     }
 }

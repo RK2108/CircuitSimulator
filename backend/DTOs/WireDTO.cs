@@ -1,20 +1,23 @@
-public class WireDTO
+namespace backend.DTOs
 {
-    public int WireId
+    public class WireDTO
     {
-        get;
-        set;
-    }
+        public int WireId
+        {
+            get;
+            set;
+        }
 
-    public int StartId
-    {
-        get;
-        set;
-    }
-    
-    public int EndId
-    {
-        get;
-        set;
+        public int StartId
+        {
+            get;
+            set;
+        }
+        
+        public int EndId
+        {
+            get;
+            set;
+        }
     }
 }

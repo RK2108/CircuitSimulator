@@ -1,26 +1,29 @@
-public class CircuitDTO
+namespace backend.DTOs
 {
-    public int CircuitId
+    public class CircuitDTO
     {
-        get;
-        set;
-    }
+        public int CircuitId
+        {
+            get;
+            set;
+        }
 
-    public required string Name
-    {
-        get;
-        set;
-    }
+        public required string Name
+        {
+            get;
+            set;
+        }
 
-    public required List<ComponentDTO> Components
-    {
-        get;
-        set;
-    }
+        public required List<ComponentDTO> Components
+        {
+            get;
+            set;
+        }
 
-    public required List<WireDTO> Wires
-    {
-        get;
-        set;
+        public required List<WireDTO> Wires
+        {
+            get;
+            set;
+        }
     }
 }
