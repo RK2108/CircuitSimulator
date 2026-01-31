@@ -182,12 +182,6 @@
                 });
 
                 alert(await response.text());
-
-                if (!response.ok){
-                    const errorMessage = await response.text();
-                    alert(errorMessage);
-                    return;
-                }
             }
             else {
 
