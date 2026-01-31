@@ -287,17 +287,10 @@ public class CircuitController : ControllerBase
     {
         try
         {
-            int CircuitId = 0;
-            string Name = "";
-
-            foreach (var circuit in database.Circuits)
-            {
-                if (circuit.CircuitId == id)
-                {
-                    CircuitId = id;
-                    Name = circuit.Name;
-                }
-            }
+            var circuit = await database.Circuits.FirstOrDefaultAsync(c => c.CircuitId == id);
+            
+            int CircuitId = circuit.CircuitId;
+            string Name = circuit.Name;
 
             var components = new List<object>();
 
