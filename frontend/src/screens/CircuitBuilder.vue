@@ -80,32 +80,49 @@
         }
     })
 
-    async function SimulateCircuit(){
-        
-        const FormattedComponents = circuit.value.components?.map((c) => {
+    function FormatComponents(){
+        const FormattedComponents = [];
 
-        const component = {
-            id: c.componentId, 
-            type: c.componentType,
-            resistance: c.resistance,
-            voltage: c.voltage,
-            power: c.power, 
-            x: c.x, 
-            y: c.y 
-        };
+        for(var comp of circuit.value.components){
     
-        return component;
+            const Component = {
+                Id: comp.componentId,
+                Type: comp.componentType,
+                Resistance: comp.resistance,
+                Voltage: comp.voltage,
+                Power: comp.power,
+                X: comp.x,
+                Y: comp.y
+            };
 
-        }) ?? [];
+            FormattedComponents.push(Component);
+        }
 
-        const FormattedWires = circuit.value.wires?.map((w) => ({
-            
-            WireId: w.wireId,
-            StartId: w.startId,
-            EndId: w.endId,
+        return FormattedComponents;
+    }
 
-        })) ?? [];
+    function FormatWires(){
+        const FormattedWires = [];
+          
+        for(var wire of circuit.value.wires){
 
+            const Wire = {
+                WireId: wire.wireId,
+                StartId: wire.startId,
+                EndId: wire.endId,
+            }
+
+            FormattedWires.push(Wire);
+        }
+
+        return FormattedWires;
+    }
+
+    function FormatCircuit(){
+        
+        const FormattedComponents = FormatComponents();
+        const FormattedWires = FormatWires();
+        
         const FormattedCircuit = {
             CircuitId: circuit.value.circuitId,
             name: circuit.value.name ?? 'Untitled Circuit',
@@ -113,13 +130,22 @@
             wires: FormattedWires,
         };
 
+        return FormattedCircuit;
+    }
+
+    /// SIMULATING CIRCUITS ///
+
+    async function SimulateCircuit(){
+
+        const Circuit = FormatCircuit();
+
         try {
             const response = await fetch(
                 'http://localhost:5107/api/circuit/simulate', 
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(FormattedCircuit),
+                    body: JSON.stringify(Circuit),
                 },
             );
 
@@ -136,49 +162,22 @@
         }
     }
 
+    /// SAVING CIRCUITS ///
+
     async function SaveCircuit(){
-
-        const FormattedComponents = circuit.value.components?.map((c) => {
-
-        const component = {
-            id: c.componentId, 
-            type: c.componentType,
-            resistance: c.resistance,
-            voltage: c.voltage,
-            power: c.power, 
-            x: c.x, 
-            y: c.y 
-        };
-    
-        return component;
-
-        }) ?? [];
-
-        const FormattedWires = circuit.value.wires?.map((w) => ({
-            
-            WireId: w.wireId,
-            StartId: w.startId,
-            EndId: w.endId,
-
-        })) ?? [];
-
-        const FormattedCircuit = {
-            CircuitId: circuit.value.circuitId,
-            name: circuit.value.name ?? 'Untitled Circuit',
-            components: FormattedComponents,
-            wires: FormattedWires,
-        };
+        
+        const Circuit = FormatCircuit();
 
         try {
 
             if (id){
-                FormattedCircuit.CircuitId = id;
+                Circuit.CircuitId = id;
                 const response = await fetch(
                 'http://localhost:5107/api/circuit/save', 
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(FormattedCircuit),
+                    body: JSON.stringify(Circuit),
                 });
 
                 alert(await response.text());
@@ -186,12 +185,12 @@
             else {
 
                 let name = window.prompt("Enter Name");
-                FormattedCircuit.name = name;
+                Circuit.name = name;
                 const response = await fetch('http://localhost:5107/api/circuit/create', 
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(FormattedCircuit),
+                    body: JSON.stringify(Circuit),
                 });
 
                 const NewId = await response.json();

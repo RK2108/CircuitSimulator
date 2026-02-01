@@ -4,9 +4,9 @@
         <h3>Input Values</h3>
         <div v-if="comp" class="result-box">
             <p>ComponentId: {{ comp.componentId }}</p>
-            <label v-if="comp.componentType === 'Battery'">Voltage: <input :value="comp.voltage" @input="voltageval = $event.target.value" required type="number"></label>
-            <label v-else-if="comp.componentType === 'Resistor'">Resistance: <input :value="comp.resistance" @input="resval = $event.target.value" required type="number"></label>
-            <label v-else-if="comp.componentType === 'Lamp'">Power: <input :value="comp.power" @input="powerval = $event.target.value" required type="number"></label>
+            <label v-if="comp.componentType === 'Battery'">Voltage: <input :value="comp.voltage" min="0.1" @input="voltageval = $event.target.value" required type="number"></label>
+            <label v-else-if="comp.componentType === 'Resistor'">Resistance: <input :value="comp.resistance" min="0.1" @input="resval = $event.target.value" required type="number"></label>
+            <label v-else-if="comp.componentType === 'Lamp'">Power: <input :value="comp.power" min="0.1" @input="powerval = $event.target.value" required type="number"></label>
         </div>
         <h3 v-if="result">Output Values</h3>
         <div v-if="result" class="result-box">
