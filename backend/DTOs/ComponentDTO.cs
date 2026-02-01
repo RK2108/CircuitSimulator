@@ -2,43 +2,43 @@ namespace backend.DTOs
 {
     public class ComponentDTO
     {
-        public required string type
+        public required string Type
         {
             get;
             set;
         }
 
-        public int id
+        public int Id
         {
             get;
             set;
         }
 
-        public required int x
+        public required int X
         {
             get;
             set;
         }
 
-        public required int y
+        public required int Y
         {
             get;
             set;
         }
 
-        public double resistance
+        public double Resistance
         {
             get;
             set;
         }
 
-        public double voltage
+        public double Voltage
         {
             get;
             set;
         }
 
-        public double power
+        public double Power
         {
             get;
             set;

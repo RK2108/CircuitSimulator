@@ -73,17 +73,17 @@ namespace backend.Controllers
                 {
                     Component comp = null;
 
-                    if (compDTO.type == "Resistor")
+                    if (compDTO.Type == "Resistor")
                     {
-                        comp = new Resistor(compDTO.id, compDTO.resistance, compDTO.x, compDTO.y);
+                        comp = new Resistor(compDTO.Id, compDTO.Resistance, compDTO.X, compDTO.Y);
                     }
-                    else if (compDTO.type == "Battery")
+                    else if (compDTO.Type == "Battery")
                     {
-                        comp = new Battery(compDTO.id, compDTO.voltage, compDTO.x, compDTO.y);
+                        comp = new Battery(compDTO.Id, compDTO.Voltage, compDTO.X, compDTO.Y);
                     }
-                    else if (compDTO.type == "Lamp")
+                    else if (compDTO.Type == "Lamp")
                     {
-                        comp = new Lamp(compDTO.id, compDTO.power, compDTO.x, compDTO.y);
+                        comp = new Lamp(compDTO.Id, compDTO.Power, compDTO.X, compDTO.Y);
                     }
 
                     if (comp != null)
@@ -235,9 +235,9 @@ namespace backend.Controllers
             {
                 return StatusCode(500, "Database error");
             }
-            catch (Exception)
+            catch (Exception err)
             {
-                return BadRequest("Error");
+                return BadRequest(err.Message);
             }
             
         }
