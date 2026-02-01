@@ -1,23 +1,45 @@
 <template>
-    <div class="container" @click.self="emit('close')">
-        <div class="modal">
-            <div class="info">
-                <h1>Information to assist you:</h1>
-                <h3>Component Related</h3>
-                    <p>1. Use the buttons on the left to choose the type of component</p>
-                    <p>2. For connecting with wires, right click on the components</p>
-                    <p>3. For deleting, select the delete button on the left and click</p>
-                <h3>Simulating Circuits</h3>
-                    <p>1. Right click on components to edit values</p>
-                    <p>2. Click the Simulate button to simulate the circuit</p>
-                    <p>3. For a simulation to work, there needs to be at least 3 components and all should have values</p>
-                <h3>Saving Circuits</h3>
-                    <p>1. Click the Save button to save the current state of the circuit</p>
-                    <p>2. These circuits can later be re-opened by going back to circuit selection</p>
-            </div>
-            <button class="close" @click="emit('close')">Close</button>
-        </div>
-    </div>
+    <v-dialog :model-value="true" @update:model-value="$emit('close')" max-width="600">
+        <v-card>
+        <v-card-title class="d-flex justify-space-between align-center">
+            <span>Help & Instructions</span>
+            <v-btn icon variant="text" @click="$emit('close')">
+            <v-icon>mdi-close</v-icon>
+            </v-btn>
+        </v-card-title>
+
+        <v-divider></v-divider>
+
+        <v-card-text>
+            <v-list>
+            <v-list-subheader>CONTROLS</v-list-subheader>
+
+            <v-list-item>
+                <template v-slot:prepend>
+                <v-icon color="primary">mdi-cursor-default</v-icon>
+                </template>
+                <v-list-item-title>Left Click</v-list-item-title>
+                <v-list-item-subtitle>Place component or delete (if delete tool selected)</v-list-item-subtitle>
+            </v-list-item>
+
+            <v-list-item>
+                <template v-slot:prepend>
+                <v-icon color="primary">mdi-cursor-default-click</v-icon>
+                </template>
+                <v-list-item-title>Right Click</v-list-item-title>
+                <v-list-item-subtitle>Connect components with wires</v-list-item-subtitle>
+            </v-list-item>
+            </v-list>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click="$emit('close')">Got it!</v-btn>
+        </v-card-actions>
+        </v-card>
+  </v-dialog>
 </template>
 
 <script setup>

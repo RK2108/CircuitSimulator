@@ -1,18 +1,33 @@
 <template>
-    <nav>
-        <button @click="router.push('/')">Back</button>
-        <button @click="SimulateCircuit">Simulate</button>
-        <button @click="SaveCircuit">Save</button>
-        <button @click="help = true">Help</button>
-    </nav>
-    <div class="container">
-        <div class="builder">
-            <Pallete @select="tool = $event" :circuit="circuit"/>
-            <Canvas @component="comp = $event" :circuit="circuit" ref="canvas"></Canvas>
-            <DataPanel :circuit="circuit" ref="data"/>
-        </div>
-        <HelpModal v-if="help" @close="help = false"></HelpModal>
-    </div>
+    <v-app>
+        <v-app-bar color="primary" dark>
+            <v-btn icon @click="router.push('/')">
+                <v-icon>mdi-arrow-left</v-icon>
+            </v-btn>
+
+            <v-toolbar-title>CircuitBuilder</v-toolbar-title>
+
+            <v-spacer></v-spacer>
+
+            <v-btn @click="SimulateCircuit" prepend-icon="mdi-play-circle">Simulate</v-btn>
+
+            <v-btn @click="SaveCircuit" prepend-icon="mdi-content-save">Save</v-btn>
+
+            <v-btn icon @click="help = true">
+                <v-icon>mdi-help-circle</v-icon>
+            </v-btn>
+        </v-app-bar>
+
+        <v-main>
+            <div class="builder">
+                <Pallete @select="tool = $event" :circuit="circuit"/>
+                <Canvas @component="comp = $event" :circuit="circuit" ref="canvas"></Canvas>
+                <DataPanel :circuit="circuit" ref="data"/>
+            </div>
+
+            <HelpModal v-if="help" @close="help = false"></HelpModal>
+        </v-main>
+    </v-app>
 </template>
 
 <script setup>
@@ -209,30 +224,11 @@
 </script>
 
 <style scoped>
-    .builder {
-        color: #111827;
-        font-family: 'Inter', sans-serif;
-        display: flex;
-        gap: 0;
-    }
-
-    button {
-        display: inline-block;
-        background-color: #3b82f6;
-        color: white;
-        padding: 10px 14px;
-        border-radius: 6px;
-        border: none;
-        cursor: pointer;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
-    }
-
-    button:hover {
-        background-color: #2563eb;
-        box-shadow: 0 3px 8px rgba(59, 130, 246, 0.3);
-        transform: translateY(-1px);
-    }
+.builder {
+    color: #111827;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    gap: 0;
+    height: calc(100vh - 64px);
+}
 </style>

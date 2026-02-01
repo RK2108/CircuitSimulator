@@ -1,21 +1,94 @@
 <template>
-    <div class="data">
-        <h3>Circuit Data</h3>
-        <h3>Input Values</h3>
-        <div v-if="comp" class="result-box">
-            <p>ComponentId: {{ comp.componentId }}</p>
-            <label v-if="comp.componentType === 'Battery'">Voltage: <input :value="comp.voltage" min="0.1" @input="voltageval = $event.target.value" required type="number"></label>
-            <label v-else-if="comp.componentType === 'Resistor'">Resistance: <input :value="comp.resistance" min="0.1" @input="resval = $event.target.value" required type="number"></label>
-            <label v-else-if="comp.componentType === 'Lamp'">Power: <input :value="comp.power" min="0.1" @input="powerval = $event.target.value" required type="number"></label>
-        </div>
-        <h3 v-if="result">Output Values</h3>
-        <div v-if="result" class="result-box">
-            <p>Component Id: {{ result.solvedComponents[SolvedComp].componentId }}</p>
-            <p>Voltage: {{ result.solvedComponents[SolvedComp].voltage }}</p>
-            <p>Resistance: {{ result.solvedComponents[SolvedComp].resistance }}</p>
-            <p>Current: {{ result.solvedComponents[SolvedComp].current}}</p>
-        </div>
-    </div>
+  <v-navigation-drawer location="right" permanent width="280">
+    <v-list>
+      <v-list-subheader>CIRCUIT DATA</v-list-subheader>
+    </v-list>
+
+    <v-container>
+      <v-card v-if="comp" class="mb-4" elevation="2">
+        <v-card-title class="text-subtitle-1">Input Values</v-card-title>
+        <v-card-text>
+          <v-chip class="mb-3" size="small">
+            Component ID: {{ comp.componentId }}
+          </v-chip>
+
+          <v-text-field
+            v-if="comp.componentType === 'Battery'"
+            label="Voltage (V)"
+            type="number"
+            :model-value="comp.voltage"
+            @update:model-value="voltageval = $event"
+            variant="outlined"
+            density="compact"
+            prepend-icon="mdi-flash">
+          </v-text-field>
+
+          <v-text-field
+            v-else-if="comp.componentType === 'Resistor'"
+            label="Resistance (Ω)"
+            type="number"
+            :model-value="comp.resistance"
+            @update:model-value="resval = $event"
+            variant="outlined"
+            density="compact"
+            prepend-icon="mdi-resistor">
+          </v-text-field>
+
+          <v-text-field
+            v-else-if="comp.componentType === 'Lamp'"
+            label="Power (W)"
+            type="number"
+            :model-value="comp.power"
+            @update:model-value="powerval = $event"
+            variant="outlined"
+            density="compact"
+            prepend-icon="mdi-lightbulb">
+          </v-text-field>
+        </v-card-text>
+      </v-card>
+
+      <v-card v-if="result" elevation="2">
+        <v-card-title class="text-subtitle-1">Output Values</v-card-title>
+        <v-card-text>
+          <v-chip class="mb-3" color="success" size="small">
+            Component ID: {{ comp.componentId }}
+          </v-chip>
+
+          <v-list density="compact">
+            <v-list-item>
+              <template v-slot:prepend>
+                <v-icon>mdi-flash</v-icon>
+              </template>
+              <v-list-item-title>Voltage</v-list-item-title>
+              <v-list-item-subtitle>
+                {{ result.solvedComponents[SolvedComp].voltage }} V
+              </v-list-item-subtitle>
+            </v-list-item>
+
+            <v-list-item>
+              <template v-slot:prepend>
+                <v-icon>mdi-resistor</v-icon>
+              </template>
+              <v-list-item-title>Resistance</v-list-item-title>
+              <v-list-item-subtitle>
+                {{ result.solvedComponents[SolvedComp].resistance }} Ω
+              </v-list-item-subtitle>
+            </v-list-item>
+
+            <v-list-item>
+              <template v-slot:prepend>
+                <v-icon>mdi-current-ac</v-icon>
+              </template>
+              <v-list-item-title>Current</v-list-item-title>
+              <v-list-item-subtitle>
+                {{ result.solvedComponents[SolvedComp].current }} A
+              </v-list-item-subtitle>
+            </v-list-item>
+          </v-list>
+        </v-card-text>
+      </v-card>
+    </v-container>
+  </v-navigation-drawer>
 </template>
 
 <script setup>
