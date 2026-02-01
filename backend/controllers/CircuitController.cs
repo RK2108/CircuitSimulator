@@ -127,6 +127,8 @@ namespace backend.Controllers
         [HttpPost("save")]
         public async Task<IActionResult> SaveCircuit([FromBody] CircuitDTO circuitDto) // Method for further saves of a circuit
         {
+            await using var transacation = await database.Database.BeginTransactionAsync();
+
             try
             {
                 Circuit payload = ConvertFromDTO(circuitDto);
@@ -228,15 +230,18 @@ namespace backend.Controllers
                 database.RemoveRange(WiresToRemove);
 
                 await database.SaveChangesAsync();
+                await transacation.CommitAsync();
 
                 return Ok("Circuit has been saved");
             }
             catch (DbException)
             {
+                await transacation.RollbackAsync();
                 return StatusCode(500, "Database error");
             }
             catch (Exception err)
             {
+                await transacation.RollbackAsync();
                 return BadRequest(err.Message);
             }
             
@@ -246,18 +251,23 @@ namespace backend.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateCircuit([FromBody] CircuitDTO circuitDto) // Method for creating a circuit and storing it initially
         {
+            await using var transacation = await database.Database.BeginTransactionAsync();
+
             try
             {
                 Circuit circuit = ConvertFromDTO(circuitDto);
 
                 if (await database.Circuits.ContainsAsync(circuit))
                 {
+                    await transacation.DisposeAsync();
                     return BadRequest("Circuit already exists with this id/name");
                 }
                 else
                 {
                     await database.Circuits.AddAsync(circuit);
+                    
                     await database.SaveChangesAsync();
+                    await transacation.CommitAsync();
 
                     var id = circuit.CircuitId;
 
@@ -266,6 +276,7 @@ namespace backend.Controllers
             }
             catch (Exception)
             {
+                await transacation.RollbackAsync();
                 return BadRequest("Something went wrong...");
             }
         }
