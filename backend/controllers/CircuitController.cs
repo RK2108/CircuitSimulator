@@ -137,6 +137,11 @@ namespace backend.Controllers
                                                 .Include(c => c.Wires)
                                                 .FirstOrDefaultAsync(c => c.CircuitId == payload.CircuitId);
 
+                if (circuit == null)
+                {
+                    throw new Exception();
+                }
+
                 // PATCH Components //
 
                 // Adding New Components //
