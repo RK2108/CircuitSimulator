@@ -10,12 +10,8 @@
             <v-spacer></v-spacer>
 
             <v-btn @click="SimulateCircuit" prepend-icon="mdi-play-circle">Simulate</v-btn>
-
             <v-btn @click="SaveCircuit" prepend-icon="mdi-content-save">Save</v-btn>
-
-            <v-btn icon @click="help = true">
-                <v-icon>mdi-help-circle</v-icon>
-            </v-btn>
+            <v-btn @click="help = true" prepend-icon="mdi-help">Help</v-btn>
         </v-app-bar>
 
         <v-main>
@@ -24,9 +20,15 @@
                 <Canvas @component="comp = $event" :circuit="circuit" ref="canvas"></Canvas>
                 <DataPanel :circuit="circuit" ref="data"/>
             </div>
-
             <HelpModal v-if="help" @close="help = false"></HelpModal>
         </v-main>
+
+        <v-snackbar v-model="Alert" :color="AlertColor" :timeout="3000">
+            {{ AlertText }}
+            <template v-slot:actions>
+                <v-btn variant="text" @click="Alert = false">Close</v-btn>
+            </template>
+        </v-snackbar>
     </v-app>
 </template>
 
@@ -45,6 +47,19 @@
     const result = ref(null);
 
     const help = ref(false);
+
+    /// Alerts ///
+    const Alert = ref(false);
+    const AlertText = ref('');
+    const AlertColor = ref('success');
+
+    function showMessage(text, color = 'success'){
+        AlertText.value = text;
+        AlertColor.value = color;
+        Alert.value = true;
+    }
+
+    /// Routing ///
 
     const router = useRouter();
     const route = useRoute();
@@ -195,7 +210,9 @@
                     body: JSON.stringify(Circuit),
                 });
 
-                alert(await response.text());
+                const message = await response.text();
+                
+                showMessage(message, "success");
             }
             else {
 
@@ -214,11 +231,12 @@
                 id = Number(NewId);
                 router.replace(`/builder/${NewId}`);
 
+                showMessage("Created successfully", "success");
                 
             }
         }
         catch (err){
-            alert(err);
+            showMessage(err, "error");
         }
     }
 </script>
