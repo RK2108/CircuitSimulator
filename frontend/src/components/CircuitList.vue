@@ -4,21 +4,36 @@
             <v-btn size="small" icon color="primary" @click="router.push(`/builder/${item.circuitId}`)">
                 <v-icon>mdi-open-in-app</v-icon>
             </v-btn>
-            <v-btn size="small" icon color="red" class="ml-2" @click="DeleteCircuit(item.circuitId)">
+            <v-btn size="small" icon color="red" class="ml-2" @click="IdToDelete = item.circuitId">
                 <v-icon>mdi-delete</v-icon>
             </v-btn>
         </template>
     </v-data-table>
+
     <v-snackbar v-model="Alert" :color="AlertColor" :timeout="3000">
         {{ AlertText }}
         <template v-slot:actions>
             <v-btn variant="text" @click="Alert = false">Close</v-btn>
         </template>
     </v-snackbar>
+
+    <v-dialog v-model="ConfirmDelete">
+        <v-card>
+            <v-card-title>Confirm Delete</v-card-title>
+            <v-card-text>
+                Are you sure you want to delete this circuit?
+            </v-card-text>
+            <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn @click="CancelDelete">Cancel</v-btn>
+                <v-btn @click="DeleteCircuit">Delete</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
 </template>
 
 <script setup>
-    import { onMounted, ref } from 'vue';
+    import { onMounted, ref, watch } from 'vue';
     import { useRouter } from 'vue-router';
 
     const router = useRouter();
@@ -56,8 +71,22 @@
 
     /// DELETING CIRCUITS ///
 
-    async function DeleteCircuit(id){
+    const ConfirmDelete = ref(false);
+    const IdToDelete = ref(null);
+
+    watch(IdToDelete, () => {
+        ConfirmDelete.value = true;
+    });
+
+    function CancelDelete(){
+        IdToDelete.value = null;
+        ConfirmDelete.value = false;
+    }
+
+    async function DeleteCircuit(){
         try {
+
+            const id = Number(IdToDelete.value);
 
             const response = await fetch('http://localhost:5107/api/circuit/delete', 
             {
@@ -67,6 +96,8 @@
             });
 
             const message = await response.text();
+
+            ConfirmDelete.value = false;
 
             GetAllCircuits();
 
