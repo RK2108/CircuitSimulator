@@ -53,7 +53,7 @@
     const AlertText = ref('');
     const AlertColor = ref('success');
 
-    function showMessage(text, color = 'success'){
+    function ShowMessage(text, color = 'success'){
         AlertText.value = text;
         AlertColor.value = color;
         Alert.value = true;
@@ -181,14 +181,10 @@
 
             result.value = await response.json();
 
-            if (!response.ok){
-                const errorMessage = await response.text();
-                alert(errorMessage);
-                return;
-            }
+            ShowMessage("Simulated successfully", "success");
         }
         catch (err){
-            alert(err);
+            ShowMessage(err, "error");
         }
     }
 
@@ -212,7 +208,7 @@
 
                 const message = await response.text();
                 
-                showMessage(message, "success");
+                ShowMessage(message, "success");
             }
             else {
 
@@ -231,12 +227,12 @@
                 id = Number(NewId);
                 router.replace(`/builder/${NewId}`);
 
-                showMessage("Created successfully", "success");
+                ShowMessage("Created successfully", "success");
                 
             }
         }
         catch (err){
-            showMessage(err, "error");
+            ShowMessage(err, "error");
         }
     }
 </script>

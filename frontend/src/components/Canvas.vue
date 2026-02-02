@@ -32,6 +32,13 @@
             </g>
         </svg>
     </div>
+
+    <v-snackbar v-model="Alert" :color="AlertColor" :timeout="3000">
+        {{ AlertText }}
+        <template v-slot:actions>
+            <v-btn variant="text" @click="Alert = false">Close</v-btn>
+        </template>
+    </v-snackbar>
 </template>
 
 <script setup>
@@ -43,6 +50,17 @@
             required: true
         }
     });
+
+    /// Alerts ///
+    const Alert = ref(false);
+    const AlertText = ref('');
+    const AlertColor = ref('success');
+
+    function ShowMessage(text, color = 'success'){
+        AlertText.value = text;
+        AlertColor.value = color;
+        Alert.value = true;
+    }
 
     const selectedTool = ref(null);
     const selectedComp = ref(null);
@@ -139,7 +157,7 @@
 
 			if (startId === endId) {
 				selectedComp.value = null;
-                alert("Cannot loop components")
+                ShowMessage("Cannot loop components", "error");
 				return;
 			}
 
@@ -153,7 +171,7 @@
 				circuit.wires.push({ wireId, startId, endId });
 			}
             else{
-                alert("Cannot connect components more than once")
+                ShowMessage("Cannot connect components more than once", "error");
             }
 
 			selectedComp.value = null;
