@@ -10,27 +10,30 @@
 				:y2="getComponent(wire.endId)?.y + 15"
 				stroke="black"
 				stroke-width="2"
-				@click="deleteWire(wire.wireId)" />
-            <g 
-                v-for="comp in circuit.components"
-                :key="comp.componentId"
-                @click.left="deleteComponent(comp.componentId)"
-                @click.right.prevent="connectComponents(comp.componentId)"
-                @click="emit('component', comp)">
-                <rect 
-                    class="component"
-                    :class="{selected: selectedComp === comp.componentId}"
-                    :x="comp.x"
-                    :y="comp.y"
-                    width="60"
-                    height="30"
-                    fill="lightgray"
-                    stroke="black"/>
-                <text :x="comp.x + 30" :y="comp.y + 20" text-anchor="middle" class="text">
-                    {{ comp.componentType }} {{ comp.componentId }}
-                </text>
-            </g>
+				@click="deleteWire(wire.wireId)"
+                class="wire" />
         </svg>
+
+        <div
+            v-for="comp in circuit.components"
+            :key="comp.componentId"
+            class="component-group"
+            :style="{ left: comp.x + 'px', top: comp.y + 'px' }"
+            @pointerdown.stop="startDrag($event, comp)"
+            @contextmenu.prevent="connectComponents(comp.componentId)"
+            @click.left="deleteComponent(comp.componentId)"
+            @click="emit('component', comp)">
+            <v-card
+                class="component"
+                elevation="4"
+                rounded="lg"
+                :class="{ selected: selectedComp === comp.componentId }">
+                
+                <v-icon size="28">
+                {{ componentIcon(comp.componentType) }}
+                </v-icon>
+            </v-card>
+        </div>
     </div>
 
     <v-snackbar v-model="Alert" :color="AlertColor" :timeout="3000">
@@ -50,6 +53,19 @@
             required: true
         }
     });
+
+    function componentIcon(type) {
+        switch (type) {
+            case 'Resistor':
+                return 'mdi-resistor';
+            case 'Battery':
+                return 'mdi-battery';
+            case 'Lamp':
+                return 'mdi-lightbulb-on-outline';
+            default:
+                return 'mdi-help-circle-outline';
+        }
+    }
 
     /// Alerts ///
     const Alert = ref(false);
@@ -187,54 +203,57 @@
 
 <style scoped>
     .container {
-		flex: 1;
-		display: flex;
+        padding: 20px;
 		justify-content: center;
 		align-items: center;
 		background: #ffffff;
 		position: relative;
 	}
 
-	.canvas {
-		width: 1000px;
-		height: 550px;
-		border: 2px solid black;
-		border-radius: 10px;
-		background:
-			linear-gradient(#5097dd 1px, transparent 1px),
-			linear-gradient(90deg, #5097dd 1px, transparent 1px);
-		background-size: 25px 25px;
-		box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.05);
-		cursor: crosshair;
-	}
+    .canvas {
+        position: relative;
+        width: 1000px;
+        height: 550px;
+        border-radius: 12px;
+        background:
+            linear-gradient(#5097dd 1px, transparent 1px),
+            linear-gradient(90deg, #5097dd 1px, transparent 1px);
+        background-size: 25px 25px;
+    }
 
-	line {
-		stroke: #1f2937;
-		stroke-width: 3;
-		transition: stroke 0.2s ease;
-	}
+    .canvas-svg {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
 
-	line:hover {
-		stroke: #3b82f6;
-		stroke-width: 3.5;
-	}
+    .wire {
+        stroke: #1f2937;
+        stroke-width: 3;
+        pointer-events: stroke;
+    }
 
-	.component {
-		stroke-width: 2;
-		rx: 8;
-		transition: all 0.2s ease;
-	}
+    .component-group {
+        position: absolute;
+        width: 80px;
+        height: 60px;
+    }
 
-	.comp-text {
-		font-size: 12px;
-		font-weight: 600;
-		fill: #1f2937;
-		paint-order: stroke;
-		stroke: white;
-		stroke-width: 0.5px;
-	}
+    .component {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.12s ease;
+    }
+
+    .component:hover {
+        transform: translateY(-2px);
+    }
 
     .selected {
-        stroke: red;
+        outline: 2px solid #ef4444;
     }
 </style>
