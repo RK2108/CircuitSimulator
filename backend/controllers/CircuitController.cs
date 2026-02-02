@@ -389,6 +389,44 @@ namespace backend.Controllers
                 return BadRequest("Something went wrong...");
             }
         }
+
+        [HttpPost("delete")]
+        public async Task<IActionResult> DeleteCircuit([FromBody] int id)
+        {
+            await using var transacation = await database.Database.BeginTransactionAsync();
+
+            try
+            {
+                var circuit = await database.Circuits.Include(c => c.Components) // checks if the circuit is already stored in the database (failsafe)
+                                                .Include(c => c.Wires)
+                                                .FirstOrDefaultAsync(c => c.CircuitId == id);
+                
+                if (circuit == null)
+                {
+                    throw new Exception();
+                }
+
+                database.Remove(circuit);
+                    
+                await database.SaveChangesAsync();
+                await transacation.CommitAsync();
+
+                return Ok("Circuit has been deleted");
+            }
+            catch (DbException)
+            {
+                await transacation.RollbackAsync();
+
+                return StatusCode(500, "Couldn't delete circuit");
+            }
+            catch (Exception)
+            {
+                await transacation.RollbackAsync();
+
+                return BadRequest("Something went wrong...");
+            }
+        }
+
     }
 }
 
