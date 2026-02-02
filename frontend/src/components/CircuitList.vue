@@ -17,7 +17,7 @@
         </template>
     </v-snackbar>
 
-    <v-dialog v-model="ConfirmDelete">
+    <v-dialog v-model="ConfirmDelete" max-width="400">
         <v-card>
             <v-card-title>Confirm Delete</v-card-title>
             <v-card-text>

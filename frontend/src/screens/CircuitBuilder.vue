@@ -10,7 +10,7 @@
             <v-spacer></v-spacer>
 
             <v-btn @click="SimulateCircuit" prepend-icon="mdi-play-circle">Simulate</v-btn>
-            <v-btn @click="SaveCircuit" prepend-icon="mdi-content-save">Save</v-btn>
+            <v-btn @click="ConfirmSave" prepend-icon="mdi-content-save">Save</v-btn>
             <v-btn @click="help = true" prepend-icon="mdi-help">Help</v-btn>
         </v-app-bar>
 
@@ -22,6 +22,23 @@
             </div>
             <HelpModal v-if="help" @close="help = false"></HelpModal>
         </v-main>
+
+        <v-dialog v-model="NameDialog" max-width="400">
+            <v-card>
+                <v-card-title>Enter chosen circuit name</v-card-title>
+                <v-card-text>
+                    <v-text-field v-model="CircuitName" 
+                                label="Circuit Name" 
+                                autofocus 
+                                @keyup.enter="SaveCircuit">
+                    </v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn @click="SaveCircuit">Confirm</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
 
         <v-snackbar v-model="Alert" :color="AlertColor" :timeout="3000">
             {{ AlertText }}
@@ -190,6 +207,18 @@
 
     /// SAVING CIRCUITS ///
 
+    const CircuitName = ref(null);
+    const NameDialog = ref(false);
+
+    function ConfirmSave(){
+        if (!id){
+            NameDialog.value = true;
+        }
+        else {
+            SaveCircuit();
+        }
+    }
+
     async function SaveCircuit(){
         
         const Circuit = FormatCircuit();
@@ -212,8 +241,8 @@
             }
             else {
 
-                let name = window.prompt("Enter Name");
-                Circuit.name = name;
+                Circuit.name = CircuitName.value;
+                NameDialog.value = false
                 const response = await fetch('http://localhost:5107/api/circuit/create', 
                 {
                     method: 'POST',
