@@ -397,9 +397,7 @@ namespace backend.Controllers
 
             try
             {
-                var circuit = await database.Circuits.Include(c => c.Components) // checks if the circuit is already stored in the database (failsafe)
-                                                .Include(c => c.Wires)
-                                                .FirstOrDefaultAsync(c => c.CircuitId == id);
+                var circuit = await database.Circuits.FirstOrDefaultAsync(c => c.CircuitId == id);
                 
                 if (circuit == null)
                 {
