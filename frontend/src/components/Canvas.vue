@@ -19,7 +19,6 @@
             :key="comp.componentId"
             class="component-group"
             :style="{ left: comp.x + 'px', top: comp.y + 'px' }"
-            @pointerdown.stop="startDrag($event, comp)"
             @contextmenu.prevent="connectComponents(comp.componentId)"
             @click.left="deleteComponent(comp.componentId)"
             @click="emit('component', comp)">
@@ -27,7 +26,8 @@
                 class="component"
                 elevation="4"
                 rounded="lg"
-                :class="{ selected: selectedComp === comp.componentId }">
+                :class="{ selected: selectedComp === comp.componentId }"
+                @mousedown="e => StartDrag(e, comp)">
                 
                 <v-icon size="28">
                 {{ componentIcon(comp.componentType) }}
@@ -65,6 +65,40 @@
             default:
                 return 'mdi-help-circle-outline';
         }
+    }
+
+    /// Drag & Drop ///
+
+    const DraggingId = ref(null);
+    let offsetX = 0;
+    let offsetY = 0;
+
+    function StartDrag(event, component){
+        DraggingId.value = component.componentId;
+        
+        offsetX = event.clientX - component.x;
+        offsetY = event.clientY - component.y;
+
+        window.addEventListener('mousemove', DuringDragging)
+        window.addEventListener('mouseup', StopDragging)
+    }
+
+    function DuringDragging(event){
+        if (!DraggingId.value){
+            return;
+        }
+
+        const component = circuit.components.find(c => c.componentId === DraggingId.value);
+
+        component.x = event.clientX - offsetX;
+        component.y = event.clientY - offsetY;
+    }
+
+    function StopDragging(){
+        DraggingId.value = null;
+
+        window.removeEventListener('mousemove', DuringDragging)
+        window.removeEventListener('mouseup', StopDragging)
     }
 
     /// Alerts ///
@@ -246,11 +280,10 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: transform 0.12s ease;
     }
 
     .component:hover {
-        transform: translateY(-2px);
+        /* transform: translateY(-2px); */
     }
 
     .selected {
