@@ -150,7 +150,7 @@ namespace backend.Controllers
 
                 foreach (var component in payload.Components)
                 {
-                    var ExistingComp = circuit.Components.FirstOrDefault(c => c.ComponentId == component.ComponentId);
+                    var ExistingComp = circuit.Components.FirstOrDefault(c => c.ComponentId == component.ComponentId && c.CircuitId == circuit.CircuitId);
 
                     if (ExistingComp == null)
                     {
@@ -178,20 +178,23 @@ namespace backend.Controllers
                     // Editing Saved Components //
                     else
                     {
-                        ExistingComp.X = component.X;
-                        ExistingComp.Y = component.Y;
-
-                        switch (ExistingComp)
+                        if (ExistingComp.CircuitId == payload.CircuitId)
                         {
-                            case Resistor r:
-                                r.Resistance = ((Resistor)component).Resistance;
-                                break;
-                            case Battery b:
-                                b.Emf = ((Battery)component).Emf;
-                                break;
-                            case Lamp l:
-                                l.Power = ((Lamp)component).Power;
-                                break;
+                            ExistingComp.X = component.X;
+                            ExistingComp.Y = component.Y;
+
+                            switch (ExistingComp)
+                            {
+                                case Resistor r:
+                                    r.Resistance = ((Resistor)component).Resistance;
+                                    break;
+                                case Battery b:
+                                    b.Emf = ((Battery)component).Emf;
+                                    break;
+                                case Lamp l:
+                                    l.Power = ((Lamp)component).Power;
+                                    break;
+                            }
                         }
                     }
                 }
@@ -205,7 +208,7 @@ namespace backend.Controllers
                     PayloadCompIDs.Add(comp.ComponentId);
                 }
 
-                var ComponentsToRemove = circuit.Components.Where(c => !PayloadCompIDs.Contains(c.ComponentId));
+                var ComponentsToRemove = circuit.Components.Where(c => c.CircuitId == payload.CircuitId && !PayloadCompIDs.Contains(c.ComponentId));
 
                 database.RemoveRange(ComponentsToRemove);
 
@@ -247,9 +250,8 @@ namespace backend.Controllers
             catch (Exception err)
             {
                 await transacation.RollbackAsync();
-                return BadRequest(err.Message);
+                return StatusCode(500, err);
             }
-            
         }
         
 
