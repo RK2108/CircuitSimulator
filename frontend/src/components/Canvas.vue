@@ -283,7 +283,7 @@
     }
 
     .component:hover {
-        /* transform: translateY(-2px); */
+        transform: translateY(-2px);
     }
 
     .selected {
