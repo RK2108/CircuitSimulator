@@ -177,20 +177,28 @@ namespace backend.Controllers
                     // Editing Saved Components //
                     else
                     {
-                        ExistingComp.X = component.X;
-                        ExistingComp.Y = component.Y;
-
-                        switch (ExistingComp)
+                        if (ExistingComp.GetType() != component.GetType())
                         {
-                            case Resistor r:
-                                r.Resistance = ((Resistor)component).Resistance;
-                                break;
-                            case Battery b:
-                                b.Emf = ((Battery)component).Emf;
-                                break;
-                            case Lamp l:
-                                l.Power = ((Lamp)component).Power;
-                                break;
+                            circuit.Components.Remove(ExistingComp);
+                            circuit.Components.Add(component);
+                        }
+                        else
+                        {
+                            ExistingComp.X = component.X;
+                            ExistingComp.Y = component.Y;
+
+                            switch (ExistingComp)
+                            {
+                                case Resistor r:
+                                    r.Resistance = ((Resistor)component).Resistance;
+                                    break;
+                                case Battery b:
+                                    b.Emf = ((Battery)component).Emf;
+                                    break;
+                                case Lamp l:
+                                    l.Power = ((Lamp)component).Power;
+                                    break;
+                            }
                         }
                     }
                 }

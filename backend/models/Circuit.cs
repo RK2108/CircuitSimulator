@@ -182,10 +182,17 @@ namespace backend.models
 
             foreach (var resistance in resistances)
             {
-                if (resistance != 0)
+                if (resistance <= 0)
                 {
-                    inverse += 1 / resistance;
+                    throw new InvalidOperationException($"One or more components have 0 or negative values: check values");
                 }
+
+                inverse += 1 / resistance;
+            }
+
+            if (inverse == 0)
+            {
+                throw new DivideByZeroException("Infinite value for resistance: check component values / connections");
             }
 
             return 1 / inverse;
