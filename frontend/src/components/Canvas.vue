@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-    import { ref } from 'vue';
+    import { onBeforeUnmount, ref } from 'vue';
     import { v4 as uuidv4 } from 'uuid';
 
     const { circuit } = defineProps({
@@ -101,6 +101,13 @@
         window.removeEventListener('mousemove', DuringDragging)
         window.removeEventListener('mouseup', StopDragging)
     }
+
+    onBeforeUnmount(() => {
+        if (DraggingId == null){
+                window.removeEventListener('mousemove', DuringDragging)
+                window.removeEventListener('mouseup', StopDragging)
+        }
+    })
 
     /// Alerts ///
     const Alert = ref(false);

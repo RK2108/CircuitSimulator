@@ -8,55 +8,49 @@
       <v-card v-if="comp" class="mb-4" elevation="2">
         <v-card-title class="text-subtitle-1">Input Values</v-card-title>
         <v-card-text>
-          <v-chip class="mb-3" size="small">
-            Component ID: {{ comp.componentId }}
-          </v-chip>
+          <v-form ref="form">
+            <v-text-field
+              v-if="comp.componentType === 'Battery'"
+              label="Voltage (V)"
+              type="number"
+              :rules="BatteryRules"
+              :model-value="comp.voltage"
+              @update:model-value="voltageval = $event"
+              variant="outlined"
+              density="compact"
+              prepend-icon="mdi-flash">
+            </v-text-field>
 
-          <v-text-field
-            v-if="comp.componentType === 'Battery'"
-            label="Voltage (V)"
-            type="number"
-            :rules="[v => v > 0 || 'Voltage must be positive']"
-            :model-value="comp.voltage"
-            @update:model-value="voltageval = $event"
-            variant="outlined"
-            density="compact"
-            prepend-icon="mdi-flash">
-          </v-text-field>
+            <v-text-field
+              v-else-if="comp.componentType === 'Resistor'"
+              label="Resistance (Ω)"
+              type="number"
+              :rules="ResistorRules"
+              :model-value="comp.resistance"
+              @update:model-value="resval = $event"
+              variant="outlined"
+              density="compact"
+              prepend-icon="mdi-resistor">
+            </v-text-field>
 
-          <v-text-field
-            v-else-if="comp.componentType === 'Resistor'"
-            label="Resistance (Ω)"
-            type="number"
-            :rules="[r => r > 0 || 'Resistance must be positive']"
-            :model-value="comp.resistance"
-            @update:model-value="resval = $event"
-            variant="outlined"
-            density="compact"
-            prepend-icon="mdi-resistor">
-          </v-text-field>
-
-          <v-text-field
-            v-else-if="comp.componentType === 'Lamp'"
-            label="Power (W)"
-            type="number"
-            :rules="[p => p > 0 || 'Power must be positive']"
-            :model-value="comp.power"
-            @update:model-value="powerval = $event"
-            variant="outlined"
-            density="compact"
-            prepend-icon="mdi-lightbulb">
-          </v-text-field>
+            <v-text-field
+              v-else-if="comp.componentType === 'Lamp'"
+              label="Power (W)"
+              type="number"
+              :rules="LampRules"
+              :model-value="comp.power"
+              @update:model-value="powerval = $event"
+              variant="outlined"
+              density="compact"
+              prepend-icon="mdi-lightbulb">
+            </v-text-field>
+          </v-form>
         </v-card-text>
       </v-card>
 
       <v-card v-if="result" elevation="2">
         <v-card-title class="text-subtitle-1">Output Values</v-card-title>
         <v-card-text>
-          <v-chip class="mb-3" color="success" size="small">
-            Component ID: {{ comp.componentId }}
-          </v-chip>
-
           <v-list density="compact">
             <v-list-item>
               <template v-slot:prepend>
@@ -120,20 +114,61 @@
 
     watch(resval, (newval) => {
         const index = circuit.components.findIndex(c => c.componentId === comp.value.componentId)
+        if (CheckData() == false){
+          return;
+        }
         circuit.components[index].resistance = newval;
     });
 
     watch(powerval, (newval) =>{
         const index = circuit.components.findIndex(c => c.componentId == comp.value.componentId)
+        if (CheckData() == false){
+          return;
+        }
         circuit.components[index].power = newval;
     })
 
     watch(voltageval, (newval) =>{
         const index = circuit.components.findIndex(c => c.componentId == comp.value.componentId)
+        if (CheckData() == false){
+          return;
+        }
         circuit.components[index].voltage = newval;
     })
 
     defineExpose({comp, result});
+
+    // Input validation rules for component values
+
+    const form = ref(null);
+
+    const BatteryRules = [
+        v => v !== null && v !== undefined || 'Voltage is required',
+        v => v > 0 || 'Voltage must be positive',
+        v => !isNaN(v) || 'Voltage must be number'
+    ];
+
+    const ResistorRules = [
+        r => r !== null && r !== undefined || 'Resistance is required',
+        r => r > 0 || 'Resistance must be positive',
+        r => !isNaN(r) || 'Resistance must be number'
+    ];
+
+    const LampRules = [
+        l => l !== null && l !== undefined || 'Power is required',
+        l => l > 0 || 'Power must be positive',
+        l => !isNaN(l) || 'Power must be number'
+    ];
+
+    function CheckData(){
+        const valid = form.value.validate();
+
+        if (valid){
+          return true;
+        }
+
+        return false;
+    }
 </script>
 
 <style scoped>

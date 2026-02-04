@@ -201,7 +201,7 @@
             ShowMessage("Simulated successfully", "success");
         }
         catch (err){
-            ShowMessage(err, "error");
+            ShowMessage(err.message, "error");
         }
     }
 
