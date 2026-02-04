@@ -26,9 +26,17 @@ namespace backend.Controllers
             {
                 Circuit circuit = ConvertFromDTO(circuitDto);
 
-                if (circuit.Components.Count < 2)
+                if (circuit.Components.Count < 1)
                 {
-                    throw new Exception("Invalid Circuit: Add more components");
+                    throw new InvalidOperationException("Invalid Circuit: Add more components");
+                }
+                else if (circuit.Components.Count > 50)
+                {
+                    throw new InvalidOperationException("Too many components: MAX 50");
+                }
+                else if (circuit.Wires.Count > 100)
+                {
+                    throw new InvalidOperationException("Too many wires: MAX 100");
                 }
                 
                 int batteryCount = 0;
@@ -42,20 +50,20 @@ namespace backend.Controllers
 
                 if (batteryCount == 0)
                 {
-                    throw new Exception("Invalid Circuit: Add a battery");
+                    throw new InvalidOperationException("Invalid Circuit: Add a battery");
                 }
 
                 var SolvedCircuit = circuit.SolveCircuit();
 
                 return Ok(SolvedCircuit); 
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException err)
             {
-                return BadRequest("Infinite Values: check component input values");        
+                return BadRequest($"{err.Message}");
             }
-            catch (ArithmeticException)
+            catch (DivideByZeroException)
             {
-                return BadRequest("Math Error");
+                return BadRequest("Infinite Resistance: check component input values");        
             }
             catch (Exception)
             {
