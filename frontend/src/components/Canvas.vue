@@ -21,12 +21,12 @@
             :style="{ left: comp.x + 'px', top: comp.y + 'px' }"
             @contextmenu.prevent="connectComponents(comp.componentId)"
             @click.left="deleteComponent(comp.componentId)"
-            @click="emit('component', comp)">
+            @click="HighlightEmitted(comp)">
             <v-card
                 class="component"
                 elevation="4"
                 rounded="lg"
-                :class="{ selected: selectedComp === comp.componentId }"
+                :class="{ selected: selectedComp === comp.componentId , highlighted: HighlightedComp === comp.componentId }"
                 @mousedown="e => StartDrag(e, comp)">
                 
                 <v-icon size="28">
@@ -123,7 +123,6 @@
     const selectedTool = ref(null);
     const selectedComp = ref(null);
     
-
     const emit = defineEmits(['component']);
 
     function DisplayComponent(event){
@@ -217,6 +216,15 @@
 		return circuit.components.find((c) => c.componentId === id);
 	}
 
+    // Highlights for selected components
+
+    const HighlightedComp = ref(null);
+
+    function HighlightEmitted(comp){
+        emit("component", comp)
+        HighlightedComp.value = comp.componentId;
+    }
+
     defineExpose({ selectedTool });
 </script>
 
@@ -272,6 +280,10 @@
     }
 
     .selected {
-        outline: 2px solid #ef4444;
+        outline: 3px solid #ef4444;
+    }
+
+    .highlighted {
+        outline: 3px solid #179650
     }
 </style>
