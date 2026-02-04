@@ -8,7 +8,7 @@ namespace backend.models
             set;
         }
 
-        public Lamp(int componentId, double power, int x, int y) : base(componentId, "Lamp", x, y)
+        public Lamp(Guid componentId, double power, int x, int y) : base(componentId, "Lamp", x, y)
         {
             Power = power;
         }

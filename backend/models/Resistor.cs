@@ -8,7 +8,7 @@ namespace backend.models
             set;
         }
 
-        public Resistor(int componentId, double resistance, int x, int y) : base(componentId, "Resistor", x, y)
+        public Resistor(Guid componentId, double resistance, int x, int y) : base(componentId, "Resistor", x, y)
         {
             Resistance = resistance;
         }

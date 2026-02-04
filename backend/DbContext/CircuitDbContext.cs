@@ -33,15 +33,15 @@ public class CircuitDbContext : DbContext
         modelBuilder.Entity<Wire>().ToTable("Wire");
 
         modelBuilder.Entity<Circuit>().HasKey(c => c.CircuitId);
-        modelBuilder.Entity<Component>().HasKey(c => c.ComponentId);
-        modelBuilder.Entity<Wire>().HasKey(w => w.WireId);
 
-        modelBuilder.Entity<Wire>().Property(w => w.WireId).ValueGeneratedNever();
+        modelBuilder.Entity<Component>().HasKey(c => c.ComponentId);
 
         modelBuilder.Entity<Component>().HasDiscriminator<string>("ComponentType")
                                         .HasValue<Resistor>("Resistor")
                                         .HasValue<Battery>("Battery")
                                         .HasValue<Lamp>("Lamp");
+
+        modelBuilder.Entity<Wire>().HasKey(w => w.WireId);
 
         base.OnModelCreating(modelBuilder);
     }

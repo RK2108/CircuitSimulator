@@ -2,7 +2,7 @@ namespace backend.models
 {
     public abstract class Component
     {
-        public int ComponentId
+        public Guid ComponentId
         {
             get;
             set;
@@ -32,7 +32,7 @@ namespace backend.models
             set;
         }
 
-        public Component(int componentId, string componentType, int x, int y)
+        public Component(Guid componentId, string componentType, int x, int y)
         {
             ComponentType = componentType;
             ComponentId = componentId;

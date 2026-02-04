@@ -8,7 +8,7 @@ namespace backend.models
             set;
         }
 
-        public Battery(int componentId, double emf, int x, int y) : base(componentId, "Battery", x, y)
+        public Battery(Guid componentId, double emf, int x, int y) : base(componentId, "Battery", x, y)
         {
             Emf = emf;
         }

@@ -47,7 +47,7 @@ namespace backend.models
             Components.Remove(comp);
         }
 
-        public int GetConnectionCount(int id) // Method that finds the number of components the component is connected to
+        public int GetConnectionCount(Guid id) // Method that finds the number of components the component is connected to
         {
             int count = 0;
 
@@ -62,9 +62,9 @@ namespace backend.models
             return count;
         }
 
-        public List<int> GetNeighbours(int currentNode) // Method that gets the all components connected to the paramaterised component
+        public List<Guid> GetNeighbours(Guid currentNode) // Method that gets the all components connected to the paramaterised component
         {
-            var neighbours = new List<int>();
+            var neighbours = new List<Guid>();
 
             foreach (var wire in Wires)
             {
@@ -87,10 +87,10 @@ namespace backend.models
             return neighbours;
         }
 
-        public List<int> TraverseBranch(int id, List<int> visited) // Method for finding a branch of components (for parallel circuits)
+        public List<Guid> TraverseBranch(Guid id, List<Guid> visited) // Method for finding a branch of components (for parallel circuits)
         {
-            var branch = new List<int>();
-            int currentNode = id;
+            var branch = new List<Guid>();
+            Guid currentNode = id;
 
             while (visited.Contains(currentNode) == false)
             {
@@ -112,11 +112,11 @@ namespace backend.models
             return branch;
         }
 
-        public List<List<int>> GetCircuitStructure(List<int> TerminalNodes) // Main BFS method for traversing a full circuit
+        public List<List<Guid>> GetCircuitStructure(List<Guid> TerminalNodes) // Main BFS method for traversing a full circuit
         {
-            var CircuitStructure = new List<List<int>>();
-            var visited = new List<int>();
-            var queue = new Queue<int>(); // A queue is used to traverse all components
+            var CircuitStructure = new List<List<Guid>>();
+            var visited = new List<Guid>();
+            var queue = new Queue<Guid>(); // A queue is used to traverse all components
 
             foreach (var id in TerminalNodes)
             {
@@ -129,7 +129,7 @@ namespace backend.models
 
                 while (queue.Count > 0)
                 {
-                    int currentNode = queue.Dequeue();
+                    Guid currentNode = queue.Dequeue();
 
                     if (visited.Contains(currentNode))
                     {
@@ -152,7 +152,7 @@ namespace backend.models
             return CircuitStructure;
         }
 
-        public double BranchResistance(List<int> branch) // Method for returning the total resistance of a branch of components
+        public double BranchResistance(List<Guid> branch) // Method for returning the total resistance of a branch of components
         {
             double resistance = 0;
             double voltage = GetVoltage();
@@ -211,7 +211,7 @@ namespace backend.models
         {
             double CircuitVoltage = GetVoltage();
 
-            var TerminalNodes = new List<int>();
+            var TerminalNodes = new List<Guid>();
             foreach (var comp in Components)
             {
                 if (GetConnectionCount(comp.ComponentId) >= 2)

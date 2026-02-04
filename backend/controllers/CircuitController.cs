@@ -95,8 +95,8 @@ namespace backend.Controllers
 
                 foreach (var wireDTO in circuitDTO.Wires)
                 {
-                    int start = wireDTO.StartId;
-                    int end = wireDTO.EndId;
+                    Guid start = wireDTO.StartId;
+                    Guid end = wireDTO.EndId;
 
                     if (start == end)
                     {
@@ -139,7 +139,7 @@ namespace backend.Controllers
 
                 if (circuit == null)
                 {
-                    throw new Exception();
+                    return NotFound($"Circuit with ID {payload.CircuitId} not found");
                 }
 
                 // PATCH Components //
@@ -150,7 +150,7 @@ namespace backend.Controllers
 
                 foreach (var component in payload.Components)
                 {
-                    var ExistingComp = circuit.Components.FirstOrDefault(c => c.ComponentId == component.ComponentId && c.CircuitId == circuit.CircuitId);
+                    var ExistingComp = circuit.Components.FirstOrDefault(c => c.ComponentId == component.ComponentId);
 
                     if (ExistingComp == null)
                     {
@@ -172,43 +172,39 @@ namespace backend.Controllers
                         }
 
                         NewComp.CircuitId = payload.CircuitId;
-
-                    await database.Components.AddAsync(NewComp);
+                        circuit.Components.Add(NewComp);
                     }
                     // Editing Saved Components //
                     else
                     {
-                        if (ExistingComp.CircuitId == payload.CircuitId)
-                        {
-                            ExistingComp.X = component.X;
-                            ExistingComp.Y = component.Y;
+                        ExistingComp.X = component.X;
+                        ExistingComp.Y = component.Y;
 
-                            switch (ExistingComp)
-                            {
-                                case Resistor r:
-                                    r.Resistance = ((Resistor)component).Resistance;
-                                    break;
-                                case Battery b:
-                                    b.Emf = ((Battery)component).Emf;
-                                    break;
-                                case Lamp l:
-                                    l.Power = ((Lamp)component).Power;
-                                    break;
-                            }
+                        switch (ExistingComp)
+                        {
+                            case Resistor r:
+                                r.Resistance = ((Resistor)component).Resistance;
+                                break;
+                            case Battery b:
+                                b.Emf = ((Battery)component).Emf;
+                                break;
+                            case Lamp l:
+                                l.Power = ((Lamp)component).Power;
+                                break;
                         }
                     }
                 }
 
                 // Deleting Removed Components //
 
-                var PayloadCompIDs = new List<int>();
+                var PayloadCompIDs = new List<Guid>();
 
                 foreach (var comp in payload.Components)
                 {
                     PayloadCompIDs.Add(comp.ComponentId);
                 }
 
-                var ComponentsToRemove = circuit.Components.Where(c => c.CircuitId == payload.CircuitId && !PayloadCompIDs.Contains(c.ComponentId));
+                var ComponentsToRemove = circuit.Components.Where(c => !PayloadCompIDs.Contains(c.ComponentId));
 
                 database.RemoveRange(ComponentsToRemove);
 
@@ -220,13 +216,16 @@ namespace backend.Controllers
 
                     if (ExistingWire == null)
                     {
-                        var NewWire = new Wire(wire.WireId, wire.StartId, wire.EndId);
-                        NewWire.CircuitId = payload.CircuitId;
-                        circuit.Wires.Add(NewWire);
+                        circuit.Wires.Add(wire);
+                    }
+                    else
+                    {
+                        ExistingWire.StartId = wire.StartId;
+                        ExistingWire.EndId = wire.EndId;
                     }
                 }
 
-                var PayloadWireIDs = new List<int>();
+                var PayloadWireIDs = new List<Guid>();
 
                 foreach (var wire in payload.Wires)
                 {
@@ -240,17 +239,17 @@ namespace backend.Controllers
                 await database.SaveChangesAsync();
                 await transacation.CommitAsync();
 
-                return Ok("Circuit has been saved");
+                return Ok("Circuit saved successfully");
             }
-            catch (DbException)
+            catch (DbUpdateException)
             {
                 await transacation.RollbackAsync();
-                return StatusCode(500, "Database error");
+                return StatusCode(500, "Failed to save");
             }
-            catch (Exception err)
+            catch (Exception)
             {
                 await transacation.RollbackAsync();
-                return StatusCode(500, err);
+                return StatusCode(500, "Unexpected error");
             }
         }
         

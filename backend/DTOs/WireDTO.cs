@@ -2,19 +2,19 @@ namespace backend.DTOs
 {
     public class WireDTO
     {
-        public int WireId
+        public Guid WireId
         {
             get;
             set;
         }
 
-        public int StartId
+        public Guid StartId
         {
             get;
             set;
         }
         
-        public int EndId
+        public Guid EndId
         {
             get;
             set;

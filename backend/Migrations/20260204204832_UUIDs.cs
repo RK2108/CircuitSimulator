@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace backend.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class UUIDs : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,13 +34,12 @@ namespace backend.Migrations
                 name: "Component",
                 columns: table => new
                 {
-                    ComponentId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ComponentId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     ComponentType = table.Column<string>(type: "varchar(13)", maxLength: 13, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     X = table.Column<int>(type: "int", nullable: false),
                     Y = table.Column<int>(type: "int", nullable: false),
-                    CircuitId = table.Column<int>(type: "int", nullable: true),
+                    CircuitId = table.Column<int>(type: "int", nullable: false),
                     Emf = table.Column<double>(type: "double", nullable: true),
                     Power = table.Column<double>(type: "double", nullable: true),
                     Resistance = table.Column<double>(type: "double", nullable: true)
@@ -51,7 +51,8 @@ namespace backend.Migrations
                         name: "FK_Component_Circuit_CircuitId",
                         column: x => x.CircuitId,
                         principalTable: "Circuit",
-                        principalColumn: "CircuitId");
+                        principalColumn: "CircuitId",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -59,11 +60,10 @@ namespace backend.Migrations
                 name: "Wire",
                 columns: table => new
                 {
-                    WireId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    StartId = table.Column<int>(type: "int", nullable: false),
-                    EndId = table.Column<int>(type: "int", nullable: false),
-                    CircuitId = table.Column<int>(type: "int", nullable: true)
+                    WireId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    StartId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    EndId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    CircuitId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -72,7 +72,8 @@ namespace backend.Migrations
                         name: "FK_Wire_Circuit_CircuitId",
                         column: x => x.CircuitId,
                         principalTable: "Circuit",
-                        principalColumn: "CircuitId");
+                        principalColumn: "CircuitId",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
