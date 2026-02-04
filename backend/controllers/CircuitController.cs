@@ -198,7 +198,7 @@ namespace backend.Controllers
                                 case Lamp l:
                                     l.Power = ((Lamp)component).Power;
                                     break;
-                            }
+                            }   
                         }
                     }
                 }
@@ -270,6 +270,13 @@ namespace backend.Controllers
             try
             {
                 Circuit circuit = ConvertFromDTO(circuitDto);
+
+                var ExistingCircuit = await database.Circuits.AnyAsync(c => c.Name == circuit.Name);
+
+                if (ExistingCircuit)
+                {
+                    return BadRequest($"Circuit name {circuit.Name} already exists");
+                }
 
                 if (await database.Circuits.ContainsAsync(circuit))
                 {
