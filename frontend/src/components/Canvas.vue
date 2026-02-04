@@ -45,7 +45,8 @@
 </template>
 
 <script setup>
-    import { ref, computed } from 'vue';
+    import { ref } from 'vue';
+    import { v4 as uuidv4 } from 'uuid';
 
     const { circuit } = defineProps({
         circuit: {
@@ -115,31 +116,6 @@
     const selectedTool = ref(null);
     const selectedComp = ref(null);
     
-    const HighesCompId = () => {
-        let highestId = 0
-        for(var comp of circuit.components){
-            if (comp.componentId >= highestId){
-                highestId = comp.componentId;
-            }
-        }
-
-        return highestId
-    }
-
-    const CompCount = computed(() => HighesCompId() + 1);
-
-    const HighestWireId = () => {
-        let highestId = 0
-        for(var wire of circuit.wires){
-            if (wire.wireId >= highestId){
-                highestId = wire.wireId
-            }
-        }
-
-        return highestId
-    }
-
-    const WireCount = computed(() => HighestWireId() + 1);
 
     const emit = defineEmits(['component']);
 
@@ -147,7 +123,7 @@
         if (selectedTool.value !== null){
             if (selectedTool.value == 'Resistor'){
                 circuit.components.push({
-                    componentId: CompCount.value,
+                    componentId: uuidv4(),
                     componentType: selectedTool.value,
                     resistance: 0,
                     voltage: 0,
@@ -158,7 +134,7 @@
             }
             else if (selectedTool.value == 'Battery'){
                 circuit.components.push({
-                    componentId: CompCount.value,
+                    componentId: uuidv4(),
                     componentType: selectedTool.value,
                     resistance: 0,
                     voltage: 0,
@@ -169,7 +145,7 @@
             }
             else if (selectedTool.value == 'Lamp'){
                 circuit.components.push({
-                    componentId: CompCount.value,
+                    componentId: uuidv4(),
                     componentType: selectedTool.value,
                     resistance: 0,
                     voltage: 0,
@@ -184,8 +160,10 @@
     function deleteComponent(id){
         if (selectedTool.value == 'Delete'){
             const index = circuit.components.findIndex((c) => c.componentId === id);
-            circuit.components.splice(index, 1);
-            circuit.wires = circuit.wires.filter((w) => w.startId !== id && w.endId !== id,);
+            if (index !== -1){
+                circuit.components.splice(index, 1);
+                circuit.wires = circuit.wires.filter((w) => w.startId !== id && w.endId !== id);
+            }
         }
     }
 
@@ -201,7 +179,7 @@
 			selectedComp.value = id;
 		} 
         else {
-            const wireId = WireCount.value;
+            const wireId = uuidv4();
 			const startId = selectedComp.value;
 			const endId = id;
 
