@@ -51,10 +51,16 @@
     async function GetAllCircuits(){
         try {
             const response = await fetch('http://localhost:5107/api/circuit/GetAllCircuits');
+            
+            if (!response.ok){
+                const message = await response.text();
+                ShowMessage(message, 'error');
+            };
+
             result.value = await response.json();
         }
         catch(err){
-            ShowMessage(err, "error")
+            ShowMessage(err, "error");
         }
     }
 
@@ -98,6 +104,7 @@
             const message = await response.text();
 
             ConfirmDelete.value = false;
+            IdToDelete.value = null;
 
             GetAllCircuits();
 

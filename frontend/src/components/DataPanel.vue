@@ -113,27 +113,51 @@
     });
 
     watch(resval, (newval) => {
-        const index = circuit.components.findIndex(c => c.componentId === comp.value.componentId)
-        if (CheckData() == false){
+        if (!comp.value){
           return;
         }
-        circuit.components[index].resistance = newval;
+        
+        const check = CheckData();
+        if (!check){
+          return;
+        }
+        
+        const index = circuit.components.findIndex(c => c.componentId === comp.value.componentId)
+        if (index !== -1){
+          circuit.components[index].resistance = newval;
+        }
     });
 
     watch(powerval, (newval) =>{
-        const index = circuit.components.findIndex(c => c.componentId == comp.value.componentId)
-        if (CheckData() == false){
+      if (!comp.value){
           return;
         }
-        circuit.components[index].power = newval;
+        
+        const check = CheckData();
+        if (!check){
+          return;
+        }
+        
+        const index = circuit.components.findIndex(c => c.componentId === comp.value.componentId)
+        if (index !== -1){
+          circuit.components[index].power = newval;
+        }
     })
 
     watch(voltageval, (newval) =>{
-        const index = circuit.components.findIndex(c => c.componentId == comp.value.componentId)
-        if (CheckData() == false){
+      if (!comp.value){
           return;
         }
-        circuit.components[index].voltage = newval;
+        
+        const check = CheckData();
+        if (!check){
+          return;
+        }
+        
+        const index = circuit.components.findIndex(c => c.componentId === comp.value.componentId)
+        if (index !== -1){
+          circuit.components[index].voltage = newval;
+        }
     })
 
     defineExpose({comp, result});
@@ -160,14 +184,9 @@
         l => !isNaN(l) || 'Power must be number'
     ];
 
-    function CheckData(){
-        const valid = form.value.validate();
-
-        if (valid){
-          return true;
-        }
-
-        return false;
+    async function CheckData(){
+        const validate =  await form.value.validate();
+        return validate.valid;
     }
 </script>
 

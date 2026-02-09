@@ -100,12 +100,17 @@
                 },
             );
 
+            if (!response.ok){
+                const message = await response.text();
+                ShowMessage(message, 'error');
+            };
+
             const data = await response.json();
 
-            circuit.value.circuitId = data.circuitId
-            circuit.value.components = data.components
-            circuit.value.name = data.name
-            circuit.value.wires = data.wires
+            circuit.value.circuitId = data.circuitId;
+            circuit.value.components = data.components;
+            circuit.value.name = data.name;
+            circuit.value.wires = data.wires;
         }
     });
 

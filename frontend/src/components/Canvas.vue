@@ -125,31 +125,12 @@
     
     const emit = defineEmits(['component']);
 
+    const PlaceableTypes = ['Resistor', 'Battery', 'Lamp'];
+
     function DisplayComponent(event){
-        if (selectedTool.value !== null){
-            if (selectedTool.value == 'Resistor'){
-                circuit.components.push({
-                    componentId: uuidv4(),
-                    componentType: selectedTool.value,
-                    resistance: 0,
-                    voltage: 0,
-                    power: 0,
-                    x: event.offsetX - 30,
-                    y: event.offsetY - 20,
-                });
-            }
-            else if (selectedTool.value == 'Battery'){
-                circuit.components.push({
-                    componentId: uuidv4(),
-                    componentType: selectedTool.value,
-                    resistance: 0,
-                    voltage: 0,
-                    power: 0,
-                    x: event.offsetX - 30,
-                    y: event.offsetY - 20,
-                });
-            }
-            else if (selectedTool.value == 'Lamp'){
+        
+        for (var type of PlaceableTypes){
+            if (type == selectedTool.value){
                 circuit.components.push({
                     componentId: uuidv4(),
                     componentType: selectedTool.value,
@@ -176,7 +157,9 @@
     function deleteWire(id) {
         if (selectedTool.value == 'Delete') {
             const index = circuit.wires.findIndex((w) => w.wireId === id);
-            circuit.wires.splice(index, 1);
+            if (index !== -1){
+                circuit.wires.splice(index, 1);
+            }
         }
 	}
 
