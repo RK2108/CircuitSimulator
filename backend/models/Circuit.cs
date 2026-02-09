@@ -1,3 +1,5 @@
+using System.Data;
+
 namespace backend.models
 {
     public class Circuit
@@ -97,9 +99,7 @@ namespace backend.models
                 visited.Add(currentNode);
                 branch.Add(currentNode);
 
-                var neighbours = GetNeighbours(currentNode);
-
-                neighbours.RemoveAll(n => visited.Contains(n));
+                var neighbours = GetNeighbours(currentNode).Where(n => !visited.Contains(n)).ToList();
 
                 if (neighbours.Count == 0)
                 {

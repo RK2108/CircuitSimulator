@@ -26,32 +26,7 @@ namespace backend.Controllers
             {
                 Circuit circuit = ConvertFromDTO(circuitDto);
 
-                if (circuit.Components.Count < 1)
-                {
-                    throw new InvalidOperationException("Invalid Circuit: Add more components");
-                }
-                else if (circuit.Components.Count > 50)
-                {
-                    throw new InvalidOperationException("Too many components: MAX 50");
-                }
-                else if (circuit.Wires.Count > 100)
-                {
-                    throw new InvalidOperationException("Too many wires: MAX 100");
-                }
-                
-                int batteryCount = 0;
-                foreach (var component in circuit.Components)
-                {
-                    if (component.ComponentType == "Battery")
-                    {
-                        batteryCount++;
-                    }
-                }
-
-                if (batteryCount == 0)
-                {
-                    throw new InvalidOperationException("Invalid Circuit: Add a battery");
-                }
+                ValidateCircuit(circuit);
 
                 var SolvedCircuit = circuit.SolveCircuit();
 
@@ -92,6 +67,10 @@ namespace backend.Controllers
                     else if (compDTO.Type == "Lamp")
                     {
                         comp = new Lamp(compDTO.Id, compDTO.Power, compDTO.X, compDTO.Y);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Unsupported component type: {compDTO.Type}");
                     }
 
                     if (comp != null)
@@ -150,6 +129,8 @@ namespace backend.Controllers
                     return NotFound($"Circuit with ID {payload.CircuitId} not found");
                 }
 
+                ValidateCircuit(circuit);
+
                 // PATCH Components //
 
                 // Adding New Components //
@@ -187,8 +168,7 @@ namespace backend.Controllers
                     {
                         if (ExistingComp.GetType() != component.GetType())
                         {
-                            circuit.Components.Remove(ExistingComp);
-                            circuit.Components.Add(component);
+                            return BadRequest("Changing component type requires deleting and recreating the component");
                         }
                         else
                         {
@@ -279,6 +259,8 @@ namespace backend.Controllers
             {
                 Circuit circuit = ConvertFromDTO(circuitDto);
 
+                ValidateCircuit(circuit);
+
                 var ExistingCircuit = await database.Circuits.AnyAsync(c => c.Name == circuit.Name);
 
                 if (ExistingCircuit)
@@ -334,6 +316,11 @@ namespace backend.Controllers
             try
             {
                 var circuit = await database.Circuits.FirstOrDefaultAsync(c => c.CircuitId == id);
+
+                if (circuit == null)
+                {
+                    return NotFound($"Circuit with ID {id} not found");
+                }
                 
                 int CircuitId = circuit.CircuitId;
                 string Name = circuit.Name;
@@ -430,7 +417,7 @@ namespace backend.Controllers
                 
                 if (circuit == null)
                 {
-                    throw new Exception();
+                    return NotFound($"Circuit with ID {id} not found");
                 }
 
                 database.Remove(circuit);
@@ -451,6 +438,37 @@ namespace backend.Controllers
                 await transacation.RollbackAsync();
 
                 return BadRequest("Something went wrong...");
+            }
+        }
+
+        public void ValidateCircuit(Circuit circuit)
+        {
+            if (circuit.Components.Count < 1)
+            {
+                throw new InvalidOperationException("Invalid Circuit: Add more components");
+            }
+            else if (circuit.Components.Count > 50)
+            {
+                throw new InvalidOperationException("Too many components: MAX 50");
+            }
+            else if (circuit.Wires.Count > 100)
+            {
+                throw new InvalidOperationException("Too many wires: MAX 100");
+            }
+            
+            int batteryCount = 0;
+
+            foreach (var component in circuit.Components)
+            {
+                if (component.ComponentType == "Battery")
+                {
+                    batteryCount++;
+                }
+            }
+
+            if (batteryCount == 0)
+            {
+                throw new InvalidOperationException("Invalid Circuit: Add a battery");
             }
         }
 
