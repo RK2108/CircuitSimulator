@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 // used namespaces
 using backend.DTOs;
 using backend.models;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace backend.Controllers
 {
@@ -120,13 +121,15 @@ namespace backend.Controllers
             {
                 Circuit payload = ConvertFromDTO(circuitDto);
 
+                ValidateCircuit(payload);
+
                 var circuit = await database.Circuits.Include(c => c.Components) // checks if the circuit is already stored in the database (failsafe)
                                                 .Include(c => c.Wires)
                                                 .FirstOrDefaultAsync(c => c.CircuitId == payload.CircuitId);
 
                 if (circuit == null)
                 {
-                    return NotFound($"Circuit with ID {payload.CircuitId} not found");
+                    throw new DbUpdateException();
                 }
 
                 ValidateCircuit(circuit);
