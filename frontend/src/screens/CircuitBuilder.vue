@@ -201,6 +201,11 @@
                 },
             );
 
+            if (!response.ok){
+                const message = await response.text();
+                throw new Error(message)
+            }
+
             result.value = await response.json();
 
             ShowMessage("Simulated successfully", "success");
@@ -241,6 +246,10 @@
                 });
 
                 const message = await response.text();
+
+                if (!response.ok){
+                    throw new Error(message);
+                }
                 
                 ShowMessage(message, "success");
             }
@@ -254,6 +263,11 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(Circuit),
                 });
+
+                if (!response.ok){
+                    const message = await response.text();
+                    throw new Error(message);
+                }
 
                 const NewId = await response.json();
 

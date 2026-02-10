@@ -112,12 +112,12 @@
         }
     });
 
-    watch(resval, (newval) => {
+    watch(resval, async (newval) => {
         if (!comp.value){
           return;
         }
         
-        const check = CheckData();
+        const check = await CheckData();
         if (!check){
           return;
         }
@@ -128,12 +128,12 @@
         }
     });
 
-    watch(powerval, (newval) =>{
+    watch(powerval, async (newval) =>{
       if (!comp.value){
           return;
         }
         
-        const check = CheckData();
+        const check = await CheckData();
         if (!check){
           return;
         }
@@ -144,12 +144,12 @@
         }
     })
 
-    watch(voltageval, (newval) =>{
+    watch(voltageval, async (newval) =>{
       if (!comp.value){
           return;
         }
         
-        const check = CheckData();
+        const check = await CheckData();
         if (!check){
           return;
         }

@@ -54,7 +54,7 @@
             
             if (!response.ok){
                 const message = await response.text();
-                ShowMessage(message, 'error');
+                throw new Error(message);
             };
 
             result.value = await response.json();
@@ -81,7 +81,9 @@
     const IdToDelete = ref(null);
 
     watch(IdToDelete, () => {
-        ConfirmDelete.value = true;
+        if (IdToDelete !== null){   
+            ConfirmDelete.value = true;
+        }
     });
 
     function CancelDelete(){
@@ -102,6 +104,10 @@
             });
 
             const message = await response.text();
+
+            if (!response.ok){
+                throw new Error(message)
+            }
 
             ConfirmDelete.value = false;
             IdToDelete.value = null;
