@@ -49,7 +49,7 @@ namespace backend.models
             Components.Remove(comp);
         }
 
-        public int GetConnectionCount(Guid id) // Method that finds the number of components the component is connected to
+        public int GetConnectionCount(Guid id) // Finds the number of components the component is connected to
         {
             int count = 0;
 
@@ -64,7 +64,7 @@ namespace backend.models
             return count;
         }
 
-        public List<Guid> GetNeighbours(Guid currentNode) // Method that gets the all components connected to the paramaterised component
+        public List<Guid> GetNeighbours(Guid currentNode) // Gets the all components connected to the paramaterised component
         {
             var neighbours = new List<Guid>();
 
@@ -89,7 +89,7 @@ namespace backend.models
             return neighbours;
         }
 
-        public List<Guid> TraverseBranch(Guid id, List<Guid> visited) // Method for finding a branch of components (for parallel circuits)
+        public List<Guid> TraverseBranch(Guid id, List<Guid> visited) // Finds a branch of components (for parallel circuits)
         {
             var branch = new List<Guid>();
             Guid currentNode = id;
@@ -143,7 +143,7 @@ namespace backend.models
                     {
                         if (visited.Contains(neighbour) == false)
                         {
-                            queue.Enqueue(neighbour); // adds all neighbours of the specified component to the queue to be traversed
+                            queue.Enqueue(neighbour); // Adds all neighbours of the specified component to the queue to be traversed
                         }
                     }
                 }
@@ -152,7 +152,7 @@ namespace backend.models
             return CircuitStructure;
         }
 
-        public double BranchResistance(List<Guid> branch) // Method for returning the total resistance of a branch of components
+        public double BranchResistance(List<Guid> branch) // Returns the total resistance of a branch of components
         {
             double resistance = 0;
             double voltage = GetVoltage();
@@ -176,7 +176,7 @@ namespace backend.models
             return resistance;
         }
 
-        public double ParallelResistance(List<double> resistances) // Method for calculating the total resistance in the circuit
+        public double ParallelResistance(List<double> resistances) // Calculates the total resistance in the circuit
         {
             double inverse = 0;
 
@@ -198,7 +198,7 @@ namespace backend.models
             return 1 / inverse;
         }
 
-        public double GetVoltage() // Method for returning the total voltage of a circuit
+        public double GetVoltage() // Returns the total voltage of a circuit
         {
             double voltage = 0;
 
@@ -214,7 +214,7 @@ namespace backend.models
             return voltage;
         }
 
-        public object SolveCircuit() // Main method to solve a circuit and create an object containing components and their key values
+        public object SolveCircuit() // Main method: solve a circuit and create an object containing components and their key values
         {
             double CircuitVoltage = GetVoltage();
 
@@ -285,7 +285,7 @@ namespace backend.models
 
                     double CompCurrent = current;
 
-                    var component = new
+                    var component = new // contains solved component data
                     {
                         componentId = comp.ComponentId,
                         voltage = CompVoltage,
@@ -297,13 +297,13 @@ namespace backend.models
                 }
             }
 
-            var circuit = new
+            var circuit = new // solved circuit data to be returned
             {
                 CircuitVoltage,
                 SolvedComponents,
             };
 
-            return circuit;
+            return circuit; // returns solved data
         }
     }
 }

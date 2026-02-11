@@ -36,6 +36,7 @@ public class CircuitDbContext : DbContext
 
         modelBuilder.Entity<Component>().HasKey(c => c.ComponentId);
 
+        // The Discriminator helps the database understand inheritance by component types
         modelBuilder.Entity<Component>().HasDiscriminator<string>("ComponentType")
                                         .HasValue<Resistor>("Resistor")
                                         .HasValue<Battery>("Battery")

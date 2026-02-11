@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 // used namespaces
 using backend.DTOs;
 using backend.models;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace backend.Controllers
 {
@@ -21,7 +20,7 @@ namespace backend.Controllers
         }
 
         [HttpPost("simulate")]
-        public IActionResult Simulate([FromBody] CircuitDTO circuitDto) // Method for simulating a circuit and returning key values
+        public IActionResult Simulate([FromBody] CircuitDTO circuitDto) // Simulates a circuit sent from the frontend
         {
             try
             {
@@ -31,7 +30,7 @@ namespace backend.Controllers
 
                 var SolvedCircuit = circuit.SolveCircuit();
 
-                return Ok(SolvedCircuit); 
+                return Ok(SolvedCircuit); // returns solved component data
             }
             catch (InvalidOperationException err)
             {
@@ -47,7 +46,7 @@ namespace backend.Controllers
             }
         }
 
-        public Circuit ConvertFromDTO(CircuitDTO circuitDTO) // Helper method for converting circuits sent from frontend to C# objects
+        public Circuit ConvertFromDTO(CircuitDTO circuitDTO) // Helper method for converting payload circuits to C# objects
         {
             try
             {
@@ -113,7 +112,7 @@ namespace backend.Controllers
 
 
         [HttpPost("save")]
-        public async Task<IActionResult> SaveCircuit([FromBody] CircuitDTO circuitDto) // Method for further saves of a circuit
+        public async Task<IActionResult> SaveCircuit([FromBody] CircuitDTO circuitDto) // Updates circuits that are already stored in the database
         {
             await using var transacation = await database.Database.BeginTransactionAsync();
 
@@ -134,9 +133,7 @@ namespace backend.Controllers
 
                 ValidateCircuit(circuit);
 
-                // PATCH Components //
-
-                // Adding New Components //
+                // Patching Components //
 
                 circuit.Name = payload.Name;
 
@@ -144,6 +141,7 @@ namespace backend.Controllers
                 {
                     var ExistingComp = circuit.Components.FirstOrDefault(c => c.ComponentId == component.ComponentId);
 
+                    // Adding New Components //
                     if (ExistingComp == null)
                     {
                         Component NewComp;
@@ -207,7 +205,7 @@ namespace backend.Controllers
 
                 database.RemoveRange(ComponentsToRemove);
 
-                // PATCH Wires //
+                // Patching Wires //
 
                 foreach (var wire in payload.Wires)
                 {
@@ -254,13 +252,15 @@ namespace backend.Controllers
         
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreateCircuit([FromBody] CircuitDTO circuitDto) // Method for creating a circuit and storing it initially
+        public async Task<IActionResult> CreateCircuit([FromBody] CircuitDTO circuitDto) // Stores/Creates the intial state of the circuit
         {
             await using var transacation = await database.Database.BeginTransactionAsync();
 
             try
             {
                 Circuit circuit = ConvertFromDTO(circuitDto);
+
+                ValidateCircuit(circuit);
 
                 var ExistingCircuit = await database.Circuits.AnyAsync(c => c.Name == circuit.Name);
 
@@ -283,7 +283,7 @@ namespace backend.Controllers
 
                     var id = circuit.CircuitId;
 
-                    return Ok(id);
+                    return Ok(id); // returns the new circuit's ID
                 }
             }
             catch (Exception)
@@ -294,7 +294,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("GetAllCircuits")]
-        public async Task<IActionResult> GetAllCircuits() // Method for returning a list of all stored circuits
+        public async Task<IActionResult> GetAllCircuits() // Returns a list of all stored circuits
         {
             try
             {
@@ -312,7 +312,7 @@ namespace backend.Controllers
         }
 
         [HttpPost("load")]
-        public async Task<IActionResult> LoadCircuit([FromBody] int id) // Method for loading a circuit, whilst mapping components correctly
+        public async Task<IActionResult> LoadCircuit([FromBody] int id) // Loads a circuit
         {
             try
             {
@@ -408,7 +408,7 @@ namespace backend.Controllers
         }
 
         [HttpPost("delete")]
-        public async Task<IActionResult> DeleteCircuit([FromBody] int id)
+        public async Task<IActionResult> DeleteCircuit([FromBody] int id) // Deletes a circuit
         {
             await using var transacation = await database.Database.BeginTransactionAsync();
 
@@ -426,7 +426,7 @@ namespace backend.Controllers
                 await database.SaveChangesAsync();
                 await transacation.CommitAsync();
 
-                return Ok("Circuit has been deleted");
+                return Ok("Circuit has been deleted"); // success message
             }
             catch (DbException)
             {
@@ -442,7 +442,7 @@ namespace backend.Controllers
             }
         }
 
-        public void ValidateCircuit(Circuit circuit)
+        public void ValidateCircuit(Circuit circuit) // Helper method for validating circuits
         {
             if (circuit.Components.Count < 1)
             {
