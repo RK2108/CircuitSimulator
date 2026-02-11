@@ -4,13 +4,13 @@
             <line
 				v-for="wire in circuit.wires"
 				:key="wire.wireId"
-				:x1="getComponent(wire.startId)?.x + 30"
-				:y1="getComponent(wire.startId)?.y + 15"
-				:x2="getComponent(wire.endId)?.x + 30"
-				:y2="getComponent(wire.endId)?.y + 15"
+				:x1="GetComponent(wire.startId)?.x + 30"
+				:y1="GetComponent(wire.startId)?.y + 15"
+				:x2="GetComponent(wire.endId)?.x + 30"
+				:y2="GetComponent(wire.endId)?.y + 15"
 				stroke="black"
 				stroke-width="2"
-				@click="deleteWire(wire.wireId)"
+				@click="DeleteWire(wire.wireId)"
                 class="wire" />
         </svg>
 
@@ -19,8 +19,8 @@
             :key="comp.componentId"
             class="component-group"
             :style="{ left: comp.x + 'px', top: comp.y + 'px' }"
-            @contextmenu.prevent="connectComponents(comp.componentId)"
-            @click.left="deleteComponent(comp.componentId)"
+            @contextmenu.prevent="ConnectComponents(comp.componentId)"
+            @click.left="DeleteComponent(comp.componentId)"
             @click="HighlightEmitted(comp)">
             <v-card
                 class="component"
@@ -30,7 +30,7 @@
                 @mousedown="e => StartDrag(e, comp)">
                 
                 <v-icon size="28">
-                {{ componentIcon(comp.componentType) }}
+                {{ ComponentIcon(comp.componentType) }}
                 </v-icon>
             </v-card>
         </div>
@@ -55,7 +55,7 @@
         }
     });
 
-    function componentIcon(type) {
+    function ComponentIcon(type) {
         switch (type) {
             case 'Resistor':
                 return 'mdi-resistor';
@@ -120,8 +120,8 @@
         Alert.value = true;
     }
 
-    const selectedTool = ref(null);
-    const selectedComp = ref(null);
+    const SelectedTool = ref(null);
+    const SelectedComp = ref(null);
     
     const emit = defineEmits(['component']);
 
@@ -130,10 +130,10 @@
     function DisplayComponent(event){
         
         for (var type of PlaceableTypes){
-            if (type == selectedTool.value){
+            if (type == SelectedTool.value){
                 circuit.components.push({
                     componentId: uuidv4(),
-                    componentType: selectedTool.value,
+                    componentType: SelectedTool.value,
                     resistance: 0,
                     voltage: 0,
                     power: 0,
@@ -144,8 +144,8 @@
         }
     }
 
-    function deleteComponent(id){
-        if (selectedTool.value == 'Delete'){
+    function DeleteComponent(id){
+        if (SelectedTool.value == 'Delete'){
             const index = circuit.components.findIndex((c) => c.componentId === id);
             if (index !== -1){
                 circuit.components.splice(index, 1);
@@ -154,8 +154,8 @@
         }
     }
 
-    function deleteWire(id) {
-        if (selectedTool.value == 'Delete') {
+    function DeleteWire(id) {
+        if (SelectedTool.value == 'Delete') {
             const index = circuit.wires.findIndex((w) => w.wireId === id);
             if (index !== -1){
                 circuit.wires.splice(index, 1);
@@ -163,17 +163,17 @@
         }
 	}
 
-	function connectComponents(id) {
-		if (!selectedComp.value) {
-			selectedComp.value = id;
+	function ConnectComponents(id) {
+		if (!SelectedComp.value) {
+			SelectedComp.value = id;
 		} 
         else {
             const wireId = uuidv4();
-			const startId = selectedComp.value;
+			const startId = SelectedComp.value;
 			const endId = id;
 
 			if (startId === endId) {
-				selectedComp.value = null;
+				SelectedComp.value = null;
                 ShowMessage("Cannot loop components", "error");
 				return;
 			}
@@ -191,11 +191,11 @@
                 ShowMessage("Cannot connect components more than once", "error");
             }
 
-			selectedComp.value = null;
+			SelectedComp.value = null;
 		}
 	}
 
-	function getComponent(id) {
+	function GetComponent(id) {
 		return circuit.components.find((c) => c.componentId === id);
 	}
 
@@ -208,7 +208,7 @@
         HighlightedComp.value = comp.componentId;
     }
 
-    defineExpose({ selectedTool });
+    defineExpose({ SelectedTool });
 </script>
 
 <style scoped>
