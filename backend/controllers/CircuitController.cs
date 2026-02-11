@@ -262,8 +262,6 @@ namespace backend.Controllers
             {
                 Circuit circuit = ConvertFromDTO(circuitDto);
 
-                ValidateCircuit(circuit);
-
                 var ExistingCircuit = await database.Circuits.AnyAsync(c => c.Name == circuit.Name);
 
                 if (ExistingCircuit)
@@ -466,6 +464,32 @@ namespace backend.Controllers
                 if (component.ComponentType == "Battery")
                 {
                     batteryCount++;
+                }
+
+            }
+
+            foreach (var comp in circuit.Components)
+            {
+                if (comp is Resistor r)
+                {
+                    if (r.Resistance <= 0)
+                    {
+                        throw new InvalidOperationException("Error: invalid component values");
+                    }
+                }
+                else if (comp is Battery b)
+                {
+                    if (b.Emf <= 0)
+                    {
+                        throw new InvalidOperationException("Error: invalid component values");
+                    }
+                }
+                else if (comp is Lamp l)
+                {
+                    if (l.Power <= 0)
+                    {
+                        throw new InvalidOperationException("Error: invalid component values");
+                    }
                 }
             }
 
