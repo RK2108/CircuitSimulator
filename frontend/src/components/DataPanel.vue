@@ -107,17 +107,17 @@
 
     const { circuit } = defineProps({
         circuit: {
-            type: Object,
+            type: Object, 
             required: true
         }
     });
 
-    watch(resval, async (newval) => {
+    watch(resval, (newval) => {
         if (!comp.value){
           return;
         }
         
-        const check = await CheckData();
+        const check = CheckData();
         if (!check){
           return;
         }
@@ -128,12 +128,12 @@
         }
     });
 
-    watch(powerval, async (newval) =>{
+    watch(powerval, (newval) =>{
       if (!comp.value){
           return;
         }
         
-        const check = await CheckData();
+        const check = CheckData();
         if (!check){
           return;
         }
@@ -144,12 +144,12 @@
         }
     })
 
-    watch(voltageval, async (newval) =>{
+    watch(voltageval, (newval) =>{
       if (!comp.value){
           return;
         }
         
-        const check = await CheckData();
+        const check = CheckData();
         if (!check){
           return;
         }
@@ -186,7 +186,7 @@
 
     async function CheckData(){
         const validate =  await form.value.validate();
-        return validate.valid;
+        return validate.valid;  
     }
 </script>
 

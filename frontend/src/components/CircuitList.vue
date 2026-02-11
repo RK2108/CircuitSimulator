@@ -81,9 +81,7 @@
     const IdToDelete = ref(null);
 
     watch(IdToDelete, () => {
-        if (IdToDelete !== null){   
-            ConfirmDelete.value = true;
-        }
+        ConfirmDelete.value = true;
     });
 
     function CancelDelete(){
@@ -105,12 +103,11 @@
 
             const message = await response.text();
 
+            ConfirmDelete.value = false;
+
             if (!response.ok){
                 throw new Error(message)
             }
-
-            ConfirmDelete.value = false;
-            IdToDelete.value = null;
 
             GetAllCircuits();
 
