@@ -103,6 +103,7 @@
             if (!response.ok){
                 const message = await response.text();
                 ShowMessage(message, 'error');
+                return;
             };
 
             const data = await response.json();

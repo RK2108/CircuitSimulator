@@ -61,7 +61,7 @@
               </template>
               <v-list-item-title>Voltage</v-list-item-title>
               <v-list-item-subtitle>
-                {{ result.solvedComponents[SolvedComp].voltage }} V
+                {{ result.solvedComponents[SolvedComp]?.voltage }} V
               </v-list-item-subtitle>
             </v-list-item>
 
@@ -71,7 +71,7 @@
               </template>
               <v-list-item-title>Resistance</v-list-item-title>
               <v-list-item-subtitle>
-                {{ result.solvedComponents[SolvedComp].resistance }} Ω
+                {{ result.solvedComponents[SolvedComp]?.resistance }} Ω
               </v-list-item-subtitle>
             </v-list-item>
 
@@ -81,7 +81,7 @@
               </template>
               <v-list-item-title>Current</v-list-item-title>
               <v-list-item-subtitle>
-                {{ result.solvedComponents[SolvedComp].current }} A
+                {{ result.solvedComponents[SolvedComp]?.current }} A
               </v-list-item-subtitle>
             </v-list-item>
           </v-list>
