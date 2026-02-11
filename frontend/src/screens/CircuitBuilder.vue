@@ -116,7 +116,7 @@
 
     watch (tool, (newVal) => {
         if (canvas.value){
-            canvas.value.selectedTool = newVal;
+            canvas.value.SelectedTool = newVal;
         }
     });
 

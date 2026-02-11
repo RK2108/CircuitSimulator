@@ -8,7 +8,7 @@
       <v-card v-if="comp" class="mb-4" elevation="2">
         <v-card-title class="text-subtitle-1">Input Values</v-card-title>
         <v-card-text>
-          <v-form ref="form">
+
             <v-text-field
               v-if="comp.componentType === 'Battery'"
               label="Voltage (V)"
@@ -16,6 +16,7 @@
               :rules="BatteryRules"
               :model-value="comp.voltage"
               @update:model-value="voltageval = $event"
+              validate-on="input"
               variant="outlined"
               density="compact"
               prepend-icon="mdi-flash">
@@ -28,6 +29,7 @@
               :rules="ResistorRules"
               :model-value="comp.resistance"
               @update:model-value="resval = $event"
+              validate-on="input"
               variant="outlined"
               density="compact"
               prepend-icon="mdi-resistor">
@@ -40,11 +42,12 @@
               :rules="LampRules"
               :model-value="comp.power"
               @update:model-value="powerval = $event"
+              validate-on="input"
               variant="outlined"
               density="compact"
               prepend-icon="mdi-lightbulb">
             </v-text-field>
-          </v-form>
+
         </v-card-text>
       </v-card>
 
@@ -86,6 +89,13 @@
       </v-card>
     </v-container>
   </v-navigation-drawer>
+
+  <v-snackbar v-model="Alert" :color="AlertColor" :timeout="3000">
+    {{ AlertText }}
+    <template v-slot:actions>
+        <v-btn variant="text" @click="Alert = false">Close</v-btn>
+    </template>
+  </v-snackbar>
 </template>
 
 <script setup>
@@ -112,13 +122,24 @@
         }
     });
 
+    /// Alerts ///
+    const Alert = ref(false);
+    const AlertText = ref('');
+    const AlertColor = ref('success');
+
+    function ShowMessage(text, color = 'success'){
+        AlertText.value = text;
+        AlertColor.value = color;
+        Alert.value = true;
+    }
+
     watch(resval, (newval) => {
         if (!comp.value){
           return;
         }
         
-        const check = CheckData();
-        if (!check){
+        if (newval <= 0 || isNaN(newval)){
+          ShowMessage("Negative or non-numeric input", "error")
           return;
         }
         
@@ -129,15 +150,15 @@
     });
 
     watch(powerval, (newval) =>{
-      if (!comp.value){
+        if (!comp.value){
           return;
         }
-        
-        const check = CheckData();
-        if (!check){
+      
+        if (newval <= 0 || isNaN(newval)){
+          ShowMessage("Negative or non-numeric input", "error")
           return;
         }
-        
+
         const index = circuit.components.findIndex(c => c.componentId === comp.value.componentId)
         if (index !== -1){
           circuit.components[index].power = newval;
@@ -145,15 +166,15 @@
     })
 
     watch(voltageval, (newval) =>{
-      if (!comp.value){
+        if (!comp.value){
           return;
         }
         
-        const check = CheckData();
-        if (!check){
+        if (newval <= 0 || isNaN(newval)){
+          ShowMessage("Negative or non-numeric input", "error")
           return;
         }
-        
+
         const index = circuit.components.findIndex(c => c.componentId === comp.value.componentId)
         if (index !== -1){
           circuit.components[index].voltage = newval;
@@ -163,8 +184,6 @@
     defineExpose({comp, result});
 
     // Input validation rules for component values
-
-    const form = ref(null);
 
     const BatteryRules = [
         v => v !== null && v !== undefined || 'Voltage is required',
@@ -183,11 +202,6 @@
         l => l > 0 || 'Power must be positive',
         l => !isNaN(l) || 'Power must be number'
     ];
-
-    async function CheckData(){
-        const validate =  await form.value.validate();
-        return validate.valid;  
-    }
 </script>
 
 <style scoped>

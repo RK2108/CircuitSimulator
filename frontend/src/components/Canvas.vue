@@ -26,7 +26,7 @@
                 class="component"
                 elevation="4"
                 rounded="lg"
-                :class="{ selected: selectedComp === comp.componentId , highlighted: HighlightedComp === comp.componentId }"
+                :class="{ selected: SelectedComp === comp.componentId , highlighted: HighlightedComp === comp.componentId }"
                 @mousedown="e => StartDrag(e, comp)">
                 
                 <v-icon size="28">
